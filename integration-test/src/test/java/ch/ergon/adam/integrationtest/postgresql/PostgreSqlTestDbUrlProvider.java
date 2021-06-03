@@ -1,9 +1,9 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
+import ch.ergon.adam.core.helper.Pair;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.postgresql.PostgreSqlFactory;
 import ch.ergon.adam.postgresql.PostgreSqlTransactionWrapper;
-import ch.ergon.adam.core.helper.Pair;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,0 +1,36 @@
+name: Build and Test
+
+on: [ push, pull_request]
+
+jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    container: adoptopenjdk:8-jdk
+
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Install dependencies
+        run: apt update && apt install git -y
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build
+        run: ./gradlew assemble
+      - name: Test
+        run: ./gradlew test -Ppostgresql_database_url="jdbc:postgresql://postgres:5432/postgres?user=postgres&password=password"
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: ./**/build/test-results/**/*.xml
+
