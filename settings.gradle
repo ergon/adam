@@ -8,3 +8,9 @@ include 'sqlite'
 include 'gradle-plugin'
 include 'integration-test-db'
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
