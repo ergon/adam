@@ -25,9 +25,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build
-        run: ./gradlew assemble
+        run: ./gradlew -S -i assemble
       - name: Test
-        run: ./gradlew test -Ppostgresql_database_url="jdbc:postgresql://postgres:5432/postgres?user=postgres&password=password"
+        run: ./gradlew -S -i test -Ppostgresql_database_url="jdbc:postgresql://postgres:5432/postgres?user=postgres&password=password"
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()

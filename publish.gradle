@@ -12,11 +12,11 @@ uploadArchives {
             beforeDeployment { deployment -> signing.signPom(deployment) }
 
             repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: project.findProperty('ossrhUsername'), password: project.findProperty('ossrhPassword'))
             }
 
             snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: project.findProperty('ossrhUsername'), password: project.findProperty('ossrhPassword'))
             }
 
             pom.project {
@@ -49,10 +49,6 @@ uploadArchives {
             }
         }
     }
-}
-
-signing {
-    sign publishing.publications.mavenJava
 }
 
 javadoc {

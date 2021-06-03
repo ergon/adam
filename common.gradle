@@ -1,3 +1,4 @@
 ergon.versioning {
     postProcessVersion = { version -> version.contains('-') ? "${version}-SNAPSHOT" : version }
+    match = 'v*'
 }
