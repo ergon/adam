@@ -15,8 +15,8 @@ public class GitVersionTreeTest extends PrePostTestBase {
     public void testGitVersionTreeFromRepo() throws IOException {
         Path gitFolder = getRepoBase();
         GitVersionTree versionTree = new GitVersionTree(gitFolder);
-        List<String> versions = versionTree.getVersionsBetween("6a6f6c067ac8e748091b3fa325e120c94636ec33", "14bf4c64eec1b4da0b5e21f891f02296d156d7eb");
-        List<String> expectedVersions = newArrayList("dc19a3e126de33c58e88172f6707d99d9398cf33", "9c1a3ab33424b91874a6eaa3120a2a67bb6e83eb", "de3564d8a0c4d0cf5f469631da2cfd2bcdc4420d", "13232d92ef26a4cc252bc7d49888bed550dd0663", "14bf4c64eec1b4da0b5e21f891f02296d156d7eb");
+        List<String> versions = versionTree.getVersionsBetween("37b8bb76211282b2fa7b202a3a774fcd50a5de06", "4ccf2191b455d1f147d8522e92514d481d7eaa77");
+        List<String> expectedVersions = newArrayList("e68f2ab4b5ca6930ac6cb359663762765f9cfdea", "4ccf2191b455d1f147d8522e92514d481d7eaa77");
         assertEquals(expectedVersions, versions);
     }
 
@@ -24,8 +24,8 @@ public class GitVersionTreeTest extends PrePostTestBase {
     public void testGitVersionTreeFromRepoUnrelatedBranches() throws IOException {
         Path gitFolder = getRepoBase();
         GitVersionTree versionTree = new GitVersionTree(gitFolder);
-        List<String> versions = versionTree.getVersionsBetween("6a6f6c067ac8e748091b3fa325e120c94636ec33", "f40622b3642be2368cb225b200e9f35caeac3800");
-        List<String> expectedVersions = newArrayList("f40622b3642be2368cb225b200e9f35caeac3800");
+        List<String> versions = versionTree.getVersionsBetween("226c98b701585c6339d795f263d4f846afcb7e13", "4ccf2191b455d1f147d8522e92514d481d7eaa77");
+        List<String> expectedVersions = newArrayList("e68f2ab4b5ca6930ac6cb359663762765f9cfdea", "4ccf2191b455d1f147d8522e92514d481d7eaa77");
         assertEquals(expectedVersions, versions);
     }
 }

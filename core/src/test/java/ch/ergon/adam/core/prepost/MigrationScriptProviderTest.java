@@ -19,27 +19,27 @@ public class MigrationScriptProviderTest extends PrePostTestBase {
     public void testGetMigrationScriptsAll() {
         Path gitFolder = getRepoBase();
         Path scriptPath = gitFolder.resolve("core/src/test/resources/test_scripts");
-        List<String> versions = newArrayList("41953516b3803a2d9fc5885461faf1ee706a7f6e", "2bc64fda1aca83d9b55dd5cf0ed272978c59c34e");
-        MigrationScriptProvider scriptProvider = new MigrationScriptProvider(new DirectoryTraverser(scriptPath), gitFolder, versions);
-        List<TraverserFile> scripts = scriptProvider.getMigrationScripts(PREMIGRATION_ONCE);
-        assertScriptOrder(scripts, newArrayList("script_with_commit.sql", "script_without_commit.sql"));
-    }
-
-    @Test
-    public void testGetMigrationScriptsAllReverse() {
-        Path gitFolder = getRepoBase();
-        Path scriptPath = gitFolder.resolve("core/src/test/resources/test_scripts");
-        List<String> versions = newArrayList("2bc64fda1aca83d9b55dd5cf0ed272978c59c34e", "41953516b3803a2d9fc5885461faf1ee706a7f6e");
+        List<String> versions = newArrayList("37b8bb76211282b2fa7b202a3a774fcd50a5de06", "b79b51616049d7152d7ba96660e3dd8160825401");
         MigrationScriptProvider scriptProvider = new MigrationScriptProvider(new DirectoryTraverser(scriptPath), gitFolder, versions);
         List<TraverserFile> scripts = scriptProvider.getMigrationScripts(PREMIGRATION_ONCE);
         assertScriptOrder(scripts, newArrayList("script_without_commit.sql", "script_with_commit.sql"));
     }
 
     @Test
+    public void testGetMigrationScriptsAllReverse() {
+        Path gitFolder = getRepoBase();
+        Path scriptPath = gitFolder.resolve("core/src/test/resources/test_scripts");
+        List<String> versions = newArrayList("b79b51616049d7152d7ba96660e3dd8160825401", "37b8bb76211282b2fa7b202a3a774fcd50a5de06");
+        MigrationScriptProvider scriptProvider = new MigrationScriptProvider(new DirectoryTraverser(scriptPath), gitFolder, versions);
+        List<TraverserFile> scripts = scriptProvider.getMigrationScripts(PREMIGRATION_ONCE);
+        assertScriptOrder(scripts, newArrayList("script_with_commit.sql", "script_without_commit.sql"));
+    }
+
+    @Test
     public void testGetMigrationScriptsOnlyWithoutCommit() {
         Path gitFolder = getRepoBase();
         Path scriptPath = gitFolder.resolve("core/src/test/resources/test_scripts");
-        List<String> versions = newArrayList("2bc64fda1aca83d9b55dd5cf0ed272978c59c34e");
+        List<String> versions = newArrayList("37b8bb76211282b2fa7b202a3a774fcd50a5de06");
         MigrationScriptProvider scriptProvider = new MigrationScriptProvider(new DirectoryTraverser(scriptPath), gitFolder, versions);
         List<TraverserFile> scripts = scriptProvider.getMigrationScripts(PREMIGRATION_ONCE);
         assertScriptOrder(scripts, newArrayList("script_without_commit.sql"));
@@ -49,7 +49,7 @@ public class MigrationScriptProviderTest extends PrePostTestBase {
     public void testGetMigrationScriptsAlways() {
         Path gitFolder = getRepoBase();
         Path scriptPath = gitFolder.resolve("core/src/test/resources/test_scripts");
-        List<String> versions = newArrayList("41953516b3803a2d9fc5885461faf1ee706a7f6e", "2bc64fda1aca83d9b55dd5cf0ed272978c59c34e");
+        List<String> versions = newArrayList("b79b51616049d7152d7ba96660e3dd8160825401", "37b8bb76211282b2fa7b202a3a774fcd50a5de06");
         MigrationScriptProvider scriptProvider = new MigrationScriptProvider(new DirectoryTraverser(scriptPath), gitFolder, versions);
         List<TraverserFile> scripts = scriptProvider.getMigrationScripts(PREMIGRATION_ALWAYS);
         assertScriptOrder(scripts, newArrayList("scriptA.sql", "scriptB.sql"));
