@@ -18,3 +18,4 @@ dependencies {
 }
 
 apply from: "${rootProject.projectDir}/publish.gradle"
+apply from: "${rootProject.projectDir}/common.gradle"

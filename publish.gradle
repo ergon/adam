@@ -6,21 +6,37 @@ java {
     withSourcesJar()
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { deployment -> signing.signPom(deployment) }
 
-            pom {
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
                 name = "${project.group}:${project.name}"
                 description = project.description
                 url = 'https://github.com/ergon/adam'
+
+                scm {
+                    connection = 'scm:git:https://github.com/ergon/adam.git'
+                    developerConnection = 'scm:git:git://github.com/ergon/adam.git'
+                    url = 'https://github.com/ergon/adam'
+                }
+
                 licenses {
                     license {
                         name = 'MIT License'
                         url = 'http://www.opensource.org/licenses/mit-license.php'
                     }
                 }
+
                 developers {
                     developer {
                         id = 'rbuehlma'
@@ -29,11 +45,6 @@ publishing {
                         organization = 'Ergon Informatik AG'
                         organizationUrl = 'https://www.ergon.ch'
                     }
-                }
-                scm {
-                    connection = 'scm:git:https://github.com/ergon/adam.git'
-                    developerConnection = 'scm:git:git://github.com/ergon/adam.git'
-                    url = 'https://github.com/ergon/adam'
                 }
             }
         }
