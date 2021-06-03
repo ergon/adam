@@ -1,0 +1,7 @@
+name: "table_b"
+fields:
+  - name: "table_a_ref"
+    dataType: "BIGINT"
+foreignKeys:
+  - field: table_a_ref
+    targetTable: table_a

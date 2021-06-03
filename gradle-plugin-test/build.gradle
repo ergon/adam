@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'ch.ergon.adam:gradle-plugin:0.15'
+        classpath 'ch.ergon.adam:postgresql:0.15'
+        classpath 'ch.ergon.adam:yml:0.15'
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+apply plugin: 'ch.ergon.adam'
+
+adam {
+    targetUrl = "jdbc:postgresql://localhost:5432/test?user=test&password=test&currentSchema=test-target"
+
+    migrateDb {
+        migrateSameVersion = true
+    }
+}

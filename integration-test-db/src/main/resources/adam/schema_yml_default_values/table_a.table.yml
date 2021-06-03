@@ -1,0 +1,9 @@
+name: "table_a"
+fields:
+  - name: "id"
+    dataType: "BIGINT"
+    sequence: true
+indexes:
+  - fields:
+      - "id"
+    primary: true

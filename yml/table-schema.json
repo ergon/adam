@@ -1,0 +1,241 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "Table Schema",
+  "required": [
+    "name",
+    "fields"
+  ],
+  "properties": {
+    "name": {
+      "$id": "#/properties/name",
+      "type": "string",
+      "description": "Table name",
+      "examples": [
+        "table_name"
+      ]
+    },
+    "fields": {
+      "$id": "#/properties/fields",
+      "type": "array",
+      "description": "Fields",
+      "items": {
+        "$id": "#/properties/fields/items",
+        "type": "object",
+        "description": "Table field",
+        "required": [
+          "name",
+          "dataType"
+        ],
+        "properties": {
+          "name": {
+            "$id": "#/properties/fields/items/properties/name",
+            "type": "string",
+            "description": "Field name",
+            "examples": [
+              "field_name"
+            ]
+          },
+          "defaultValue": {
+            "$id": "#/properties/fields/items/properties/defaultValue",
+            "type": "string",
+            "description": "Default value"
+          },
+          "dataType": {
+            "$id": "#/properties/fields/items/properties/dataType",
+            "type": "string",
+            "enum": [
+              "VARCHAR",
+              "CHAR",
+              "LONGVARCHAR",
+              "CLOB",
+              "NVARCHAR",
+              "NCHAR",
+              "LONGNVARCHAR",
+              "NCLOB",
+              "BOOLEAN",
+              "BIT",
+              "TINYINT",
+              "SMALLINT",
+              "INTEGER",
+              "BIGINT",
+              "DECIMAL_INTEGER",
+              "TINYINTUNSIGNED",
+              "SMALLINTUNSIGNED",
+              "INTEGERUNSIGNED",
+              "BIGINTUNSIGNED",
+              "DOUBLE",
+              "FLOAT",
+              "REAL",
+              "NUMERIC",
+              "DECIMAL",
+              "DATE",
+              "TIMESTAMP",
+              "TIME",
+              "INTERVALYEARTOMONTH",
+              "INTERVALDAYTOSECOND",
+              "LOCALDATE",
+              "LOCALTIME",
+              "LOCALDATETIME",
+              "OFFSETTIME",
+              "OFFSETDATETIME",
+              "TIMEWITHTIMEZONE",
+              "TIMESTAMPWITHTIMEZONE",
+              "BINARY",
+              "VARBINARY",
+              "LONGVARBINARY",
+              "BLOB",
+              "ENUM",
+              "UUID"
+            ],
+            "description": "Field type",
+            "examples": [
+              "BIGINT"
+            ]
+          },
+          "enumName": {
+            "$id": "#/properties/fields/items/properties/enumName",
+            "type": "string",
+            "description": "Enum name (only if dataType is ENUM)"
+          },
+          "nullable": {
+            "$id": "#/properties/fields/items/properties/nullable",
+            "type": "boolean",
+            "description": "Field is nullable"
+          },
+          "sequence": {
+            "$id": "#/properties/fields/items/properties/sequence",
+            "type": "boolean",
+            "description": "Field is a sequence"
+          },
+          "length": {
+            "$id": "#/properties/fields/items/properties/length",
+            "type": "integer",
+            "description": "Field length"
+          },
+          "precision": {
+            "$id": "#/properties/fields/items/properties/precision",
+            "type": "integer",
+            "description": "Field precision. The precision of a numeric is the total count of significant digits in the whole number, that is, the number of digits to both sides of the decimal point."
+          },
+          "scale": {
+            "$id": "#/properties/fields/items/properties/scale",
+            "type": "integer",
+            "description": "Field scale. The scale of a numeric is the count of decimal digits in the fractional part, to the right of the decimal point."
+          },
+          "sqlForNew": {
+            "$id": "#/properties/fields/items/properties/sqlForNew",
+            "type": "string",
+            "description": "SQL used to initialize field if new on existing table"
+          }
+        }
+      }
+    },
+    "foreignKeys": {
+      "$id": "#/properties/foreignKeys",
+      "type": "array",
+      "description": "Foreign keys",
+      "items": {
+        "$id": "#/properties/foreignKeys/items",
+        "type": "object",
+        "description": "Foreign key",
+        "required": [
+          "field",
+          "targetTable"
+        ],
+        "properties": {
+          "name": {
+            "$id": "#/properties/foreignKeys/items/properties/name",
+            "type": "string",
+            "description": "Foreign key name. Automatically generated if not set."
+          },
+          "field": {
+            "$id": "#/properties/foreignKeys/items/properties/field",
+            "type": "string",
+            "description": "Source field name of this foreign key"
+          },
+          "targetIndex": {
+            "$id": "#/properties/foreignKeys/items/properties/targetIndex",
+            "type": "string",
+            "description": "Target index name. PK of target table if not set"
+          },
+          "targetTable": {
+            "$id": "#/properties/foreignKeys/items/properties/targetTable",
+            "type": "string",
+            "description": "Target table name"
+          }
+        }
+      }
+    },
+    "indexes": {
+      "$id": "#/properties/indexes",
+      "type": "array",
+      "description": "Indexes",
+      "items": {
+        "$id": "#/properties/indexes/items",
+        "type": "object",
+        "description": "Index",
+        "required": [
+          "fields"
+        ],
+        "properties": {
+          "name": {
+            "$id": "#/properties/indexes/items/properties/name",
+            "type": "string",
+            "description": "Index name. Automatically generated if not set."
+          },
+          "fields": {
+            "$id": "#/properties/indexes/items/properties/fields",
+            "type": "array",
+            "description": "Indexed fields",
+            "items": {
+              "$id": "#/properties/indexes/items/properties/fields/items",
+              "type": "string",
+              "description": "Field name",
+              "examples": [
+                "idx_field"
+              ]
+            }
+          },
+          "primary": {
+            "$id": "#/properties/indexes/items/properties/primary",
+            "type": "boolean",
+            "description": "Is primary key"
+          },
+          "unique": {
+            "$id": "#/properties/indexes/items/properties/unique",
+            "type": "boolean",
+            "description": "Is unique key"
+          }
+        }
+      }
+    },
+    "ruleConstraints": {
+      "$id": "#/properties/ruleConstraints",
+      "type": "array",
+      "description": "Rule constraints",
+      "items": {
+        "$id": "#/properties/ruleConstraints/items",
+        "type": "object",
+        "description": "Rule constraints",
+        "required": [
+          "rule"
+        ],
+        "properties": {
+          "name": {
+            "$id": "#/properties/ruleConstraints/items/properties/name",
+            "type": "string",
+            "description": "Rule name. Automatically generated if not set."
+          },
+          "rule": {
+            "$id": "#/properties/ruleConstraints/items/properties/rule",
+            "type": "string",
+            "description": "The rule"
+          }
+        }
+      }
+    }
+  }
+}

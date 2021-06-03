@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id "ch.ergon.gradle.goodies.versioning"
+}
+
+group 'ch.ergon.adam'
+description 'The jOOQ plugin for ADAM'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    compile project(':core')
+    compile group: 'org.jooq', name: 'jooq', version: '3.14.8'
+}
+
+apply from: "${rootProject.projectDir}/publish.gradle"

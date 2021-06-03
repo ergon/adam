@@ -1,0 +1,32 @@
+---
+name: "test_table"
+fields:
+  - name: "id"
+    dataType: "BIGINT"
+    sequence: true
+  - name: "col1"
+    dataType: "DECIMAL_INTEGER"
+  - name: "col2"
+    dataType: "NUMERIC"
+    defaultValue: "10"
+    nullable: true
+    precision: 10
+    scale: 2
+  - name: "col3"
+    dataType: "VARCHAR"
+    nullable: true
+  - name: "col4"
+    dataType: "VARCHAR"
+    length: 10
+foreignKeys: []
+indexes:
+  - name: "test_table_col1_key"
+    fields:
+      - "col1"
+    unique: true
+  - name: "test_table_pkey"
+    fields:
+      - "id"
+    primary: true
+    unique: true
+ruleConstraints: []

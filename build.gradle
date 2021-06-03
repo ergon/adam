@@ -1,0 +1,20 @@
+plugins {
+    id "ch.ergon.gradle.goodies.versioning" version "0.0.0-21-g97656ba"
+    id 'com.github.jk1.dependency-license-report' version '1.16'
+}
+
+
+group 'ch.ergon'
+
+licenseReport {
+    allowedLicensesFile = new File("$projectDir/allowed-licenses.json")
+
+    checkLicense {
+        outputs.upToDateWhen { false }
+    }
+
+    generateLicenseReport {
+        outputs.upToDateWhen { false }
+    }
+
+}

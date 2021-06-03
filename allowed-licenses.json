@@ -1,0 +1,49 @@
+{
+  "allowedLicenses": [
+    {
+      "moduleLicense": "MIT License"
+    },
+    {
+      "moduleLicense": "Apache License, Version 2.0"
+    },
+    {
+      "moduleLicense": "The MIT License"
+    },
+    {
+      "moduleLicense": "Apache License 2.0"
+    },
+    {
+      "moduleLicense": "The Apache Software License, Version 2.0"
+    },
+    {
+      "moduleLicense": "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0"
+    },
+    {
+      "moduleLicense": "CDDL 1.1"
+    },
+    {
+      "moduleLicense": "The New BSD License"
+    },
+    {
+      "moduleLicense": "WTFPL"
+    },
+    {
+      "moduleLicense": "Apache 2.0"
+    },
+    {
+      "moduleLicense": "Apache 2"
+    },
+    {
+      "moduleLicense": "BSD-2-Clause"
+    },
+    {
+      "moduleLicense": "CC0"
+    },
+    {
+      "moduleLicense": "Eclipse Distribution License (New BSD License)"
+    },
+    {
+      "moduleName": "com.fasterxml.jackson:jackson-bom"
+    }
+  ]
+}

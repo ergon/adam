@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id "ch.ergon.gradle.goodies.versioning"
+    id 'maven'
+}
+
+group 'ch.ergon.adam'
+description 'The YML plugin for ADAM'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.12.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.2'
+    compile project(':core')
+}
+
+apply from: "${rootProject.projectDir}/publish.gradle"

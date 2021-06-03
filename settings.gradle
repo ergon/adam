@@ -1,0 +1,10 @@
+rootProject.name = 'adam'
+include 'core'
+include 'jooq'
+include 'yml'
+include 'postgresql'
+include 'integration-test'
+include 'sqlite'
+include 'gradle-plugin'
+include 'integration-test-db'
+

@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id "ch.ergon.gradle.goodies.versioning"
+    id 'maven'
+}
+
+group 'ch.ergon.adam'
+description = 'The ADAM Gradle Plugin'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile gradleApi()
+    compile project(':core')
+}
+
+apply from: "${rootProject.projectDir}/publish.gradle"

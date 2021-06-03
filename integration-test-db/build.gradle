@@ -1,0 +1,7 @@
+plugins {
+    id 'java'
+}
+
+group 'ch.ergon.adam'
+
+sourceCompatibility = 1.8
