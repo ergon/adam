@@ -2,25 +2,26 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        }
     }
 
     dependencies {
-        classpath 'ch.ergon.adam:gradle-plugin:0.15'
-        classpath 'ch.ergon.adam:postgresql:0.15'
-        classpath 'ch.ergon.adam:yml:0.15'
+        classpath 'ch.ergon.adam:postgresql:1.0.0-1-gf88937e-SNAPSHOT'
+        classpath 'ch.ergon.adam:yml:1.0.0-1-gf88937e-SNAPSHOT'
     }
 }
 
 plugins {
     id 'java'
+    id 'ch.ergon.adam' version '0.9.0'
 }
-
-apply plugin: 'ch.ergon.adam'
 
 adam {
     targetUrl = "jdbc:postgresql://localhost:5432/test?user=test&password=test&currentSchema=test-target"
 
-    migrateDb {
+    adamMigrateDb {
         migrateSameVersion = true
     }
 }

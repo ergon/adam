@@ -1,7 +1,7 @@
 package ch.ergon.adam.gradleplugin.tasks;
 
 import ch.ergon.adam.core.Adam;
-import ch.ergon.adam.gradleplugin.adamExtension;
+import ch.ergon.adam.gradleplugin.AdamExtension;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.tasks.Input;
@@ -24,11 +24,11 @@ public class MigrateDBTask extends DefaultTask {
     private boolean allowUnknownDBVersion;
     private boolean migrateSameVersion;
     private boolean allowNonForwardMigration;
-    private adamExtension extension;
+    private AdamExtension extension;
 
 
     public MigrateDBTask() {
-        extension = getProject().getExtensions().getByType(adamExtension.class);
+        extension = getProject().getExtensions().getByType(AdamExtension.class);
     }
 
     @TaskAction

@@ -1,6 +1,6 @@
 package ch.ergon.adam.gradleplugin.tasks;
 
-import ch.ergon.adam.gradleplugin.adamExtension;
+import ch.ergon.adam.gradleplugin.AdamExtension;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
@@ -15,12 +15,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ExportTargetVersionTask extends DefaultTask {
 
-    private final adamExtension extension;
+    private final AdamExtension extension;
     private Path targetVersionFile;
     private String targetVersion;
 
     public ExportTargetVersionTask() {
-        extension = getProject().getExtensions().getByType(adamExtension.class);
+        extension = getProject().getExtensions().getByType(AdamExtension.class);
     }
 
 

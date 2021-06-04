@@ -17,7 +17,7 @@ import static ch.ergon.adam.core.Adam.TARGET_VERSION_FILE_NAME;
 import static ch.ergon.adam.core.helper.FileHelper.getRepoBase;
 import static org.eclipse.jgit.lib.Constants.HEAD;
 
-public class adamExtension {
+public class AdamExtension {
 
     public String targetUrl;
     public String targetVersion;
@@ -28,7 +28,7 @@ public class adamExtension {
     public String adamSourcePackage;
     public Path gitRepo;
 
-    public adamExtension(Project project) throws IOException {
+    public AdamExtension(Project project) throws IOException {
         resourceBuildPath = new File(project.getBuildDir(), "resources/main/").getPath();
         resourceSourcePath = project.getProjectDir() + "/" + DEFAULT_MAIN_RESOURCE_PATH;
         adamSourcePackage = DEFAULT_ADAM_PACKAGE;
