@@ -118,13 +118,14 @@ ADAM can be used as a library in a Java application or executed using the Gradle
 ```groovy
 buildscript {
   dependencies {
-    classpath 'ch.ergon.adam:gradle-plugin:2021.0'
-    classpath 'ch.ergon.adam:postgresql:2021.0'
-    classpath 'ch.ergon.adam:yml:2021.0'
+    classpath 'ch.ergon.adam:postgresql:1.0.0'
+    classpath 'ch.ergon.adam:yml:1.0.0'
   }
 }
 
-apply plugin: 'ch.ergon.adam'
+plugins {
+  id 'ch.ergon.adam' version '1.0.0'
+}
 
 adam {
   targetUrl = 'jdbc:postgresql://localhost:5432/dbname?user=username&password=password&currentSchema=dbschema'

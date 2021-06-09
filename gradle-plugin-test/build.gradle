@@ -8,14 +8,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'ch.ergon.adam:postgresql:1.0.0-1-gf88937e-SNAPSHOT'
-        classpath 'ch.ergon.adam:yml:1.0.0-1-gf88937e-SNAPSHOT'
+        classpath 'ch.ergon.adam:postgresql:1.0.0'
+        classpath 'ch.ergon.adam:yml:1.0.0'
     }
 }
 
 plugins {
     id 'java'
-    id 'ch.ergon.adam' version '0.9.0'
+    id 'ch.ergon.adam' version '1.0.0'
 }
 
 adam {
