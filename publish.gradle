@@ -1,11 +1,6 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -56,3 +51,22 @@ javadoc {
         options.addBooleanOption('html5', true)
     }
 }
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
