@@ -1,29 +1,28 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { deployment -> signing.signPom(deployment) }
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc
+}
 
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: project.findProperty('ossrhUsername'), password: project.findProperty('ossrhPassword'))
-            }
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
 
-            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: project.findProperty('ossrhUsername'), password: project.findProperty('ossrhPassword'))
-            }
+publishing {
+    publications {
+        release(MavenPublication) {
 
-            pom.project {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
                 name = "${project.group}:${project.name}"
                 description = project.description
                 url = 'https://github.com/ergon/adam'
-
-                scm {
-                    connection = 'scm:git:https://github.com/ergon/adam.git'
-                    developerConnection = 'scm:git:git://github.com/ergon/adam.git'
-                    url = 'https://github.com/ergon/adam'
-                }
 
                 licenses {
                     license {
@@ -41,6 +40,12 @@ uploadArchives {
                         organizationUrl = 'https://www.ergon.ch'
                     }
                 }
+
+                scm {
+                    connection = 'scm:git:https://github.com/ergon/adam.git'
+                    developerConnection = 'scm:git:git://github.com/ergon/adam.git'
+                    url = 'https://github.com/ergon/adam'
+                }
             }
         }
     }
@@ -52,21 +57,10 @@ javadoc {
     }
 }
 
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
 artifacts {
     archives javadocJar, sourcesJar
 }
 
 signing {
-    sign configurations.archives
+    sign publishing.publications
 }
-

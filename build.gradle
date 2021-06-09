@@ -7,7 +7,10 @@ buildscript {
 plugins {
     id "ch.ergon.gradle.goodies.versioning" version "0.0.0-21-g97656ba"
     id 'com.github.jk1.dependency-license-report' version '1.16'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
+
+apply from: "${rootProject.projectDir}/common.gradle"
 
 group 'ch.ergon.adam'
 
@@ -24,3 +27,14 @@ licenseReport {
 
 }
 
+nexusPublishing {
+    repositories {
+        sonatype {
+            stagingProfileId = project.findProperty('ossrhStagingProfileId')
+            username = project.findProperty('ossrhUsername')
+            password = project.findProperty('ossrhPassword')
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
