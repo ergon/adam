@@ -14,7 +14,7 @@ public class AdamPlugin implements Plugin<Project> {
     @Override
     public void apply(@Nonnull Project project) {
 
-        project.getExtensions().create(ADAM_EXTENSION, adamExtension.class, project);
+        project.getExtensions().create(ADAM_EXTENSION, AdamExtension.class, project);
 
         project.getTasks().create("adamExportMigrationScripts", ExportMigrationScriptsTask.class).setGroup(ADAM_EXTENSION);
 

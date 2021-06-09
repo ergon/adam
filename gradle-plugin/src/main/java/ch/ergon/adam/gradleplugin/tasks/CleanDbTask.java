@@ -2,7 +2,7 @@ package ch.ergon.adam.gradleplugin.tasks;
 
 import ch.ergon.adam.core.db.SourceAndSinkFactory;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
-import ch.ergon.adam.gradleplugin.adamExtension;
+import ch.ergon.adam.gradleplugin.AdamExtension;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.tasks.Input;
@@ -13,11 +13,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class CleanDbTask extends DefaultTask {
 
-    private final adamExtension extension;
+    private final AdamExtension extension;
     private String targetUrl;
 
     public CleanDbTask() {
-        extension = getProject().getExtensions().getByType(adamExtension.class);
+        extension = getProject().getExtensions().getByType(AdamExtension.class);
     }
 
     @TaskAction
