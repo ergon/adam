@@ -4,10 +4,7 @@ import ch.ergon.adam.core.filetree.DirectoryTraverser;
 import ch.ergon.adam.core.prepost.MigrationScriptProvider;
 import ch.ergon.adam.gradleplugin.AdamExtension;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.InputDirectory;
-import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.SkipWhenEmpty;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -20,6 +17,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 public class ExportMigrationScriptsTask extends DefaultTask {
 
     private final AdamExtension extension;
+    @Internal
     private Path gitRepo;
     private Path migrationScriptSourcePath;
     private Path migrationScriptExportPath;
