@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
@@ -22,6 +24,8 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 public class PostgreSqlSource extends JooqSource {
+
+    private static final Pattern CHECK_CONSTRAINT_PATTERN = Pattern.compile("^CHECK \\((.*)\\)$");
 
     private final String schemaName;
     private Map<String, DbEnum> enums;
@@ -188,7 +192,7 @@ public class PostgreSqlSource extends JooqSource {
     }
 
     private void fetchConstraints(Schema schema) {
-        Result<Record> result = getContext().resultQuery("SELECT rel.relname, con.conname, con.contype, con.consrc " +
+        Result<Record> result = getContext().resultQuery("SELECT rel.relname, con.conname, con.contype, pg_get_constraintdef(con.oid) AS expression " +
             "FROM pg_catalog.pg_constraint con " +
             "INNER JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid " +
             "INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace " +
@@ -212,7 +216,12 @@ public class PostgreSqlSource extends JooqSource {
                 return new PrimaryKeyConstraint(name);
             case "c":
                 RuleConstraint ruleConstraint = new RuleConstraint(name);
-                ruleConstraint.setRule(record.getValue("consrc").toString());
+                String expression = record.getValue("expression").toString();
+                Matcher matcher = CHECK_CONSTRAINT_PATTERN.matcher(expression);
+                if (!matcher.find()) {
+                    throw new RuntimeException(format("Rule [%s] for constraint [%s] could not be parsed.", expression, name));
+                }
+                ruleConstraint.setRule(matcher.group(1));
                 return ruleConstraint;
             default:
                 throw new RuntimeException(format("Unsupported constraint type [%s]", constraintType));
