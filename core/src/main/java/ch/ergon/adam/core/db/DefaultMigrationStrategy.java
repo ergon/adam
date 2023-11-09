@@ -6,6 +6,7 @@ import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.core.helper.Pair;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Comparator.comparing;
@@ -29,7 +30,7 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
     Set<View> viewsToDrop = new LinkedHashSet<>();
     Set<DbEnum> enumsToCreate = new LinkedHashSet<>();
     Set<DbEnum> enumsToUpdate = new LinkedHashSet<>();
-    Set<Field> fieldsToChangeTypeForEnumMigration = new LinkedHashSet<>();
+    Set<Field> tableFieldsToChangeTypeForEnumMigration = new LinkedHashSet<>();
     Set<DbEnum> enumsToDrop = new LinkedHashSet<>();
     Set<Constraint> constraintsToDrop = new LinkedHashSet<>();
     Set<Constraint> constraintsToCreate = new LinkedHashSet<>();
@@ -214,7 +215,10 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
     public void enumUpdated(DbEnum oldEnum, DbEnum newEnum) {
         enumsToUpdate.add(oldEnum);
         enumsToCreate.add(newEnum);
-        fieldsToChangeTypeForEnumMigration.addAll(oldEnum.getReferencingFields());
+        List<Field> referencingTableFields = oldEnum.getReferencingFields().stream()
+            .filter(f -> f.getContainer() instanceof Table)
+            .collect(toList());
+        tableFieldsToChangeTypeForEnumMigration.addAll(referencingTableFields);
     }
 
     @Override
@@ -275,7 +279,7 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
 
         sequencesToDrop.forEach(sink::dropSequence);
 
-        fieldsToChangeTypeForEnumMigration.forEach(field -> {
+        tableFieldsToChangeTypeForEnumMigration.forEach(field -> {
             sink.dropDefault(field);
             sink.changeFieldType(field, field, DataType.CLOB);
         });
@@ -284,7 +288,7 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
 
         enumsToCreate.forEach(sink::createEnum);
 
-        fieldsToChangeTypeForEnumMigration.forEach(field -> {
+        tableFieldsToChangeTypeForEnumMigration.forEach(field -> {
             sink.changeFieldType(field, field, field.getDataType());
             sink.setDefault(field);
         });
