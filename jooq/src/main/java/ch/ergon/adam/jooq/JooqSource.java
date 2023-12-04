@@ -9,6 +9,9 @@ import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.types.DayToSecond;
+import org.jooq.types.YearToMonth;
+import org.jooq.types.YearToSecond;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -193,7 +196,20 @@ public class JooqSource implements SchemaSource {
     }
 
     protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField) {
-        String typeName = jooqField.getDataType().getSQLDataType().getTypeName();
+        org.jooq.DataType<?> sqlDataType = jooqField.getDataType().getSQLDataType();
+        if (sqlDataType.isInterval()) {
+            Class<?> type = sqlDataType.getType();
+            if (type.equals(YearToSecond.class)) {
+                return DataType.INTERVALYEARTOSECOND;
+            } else if (type.equals(YearToMonth.class)) {
+                return DataType.INTERVALYEARTOMONTH;
+            } else if (type.equals(DayToSecond.class)) {
+                return DataType.INTERVALDAYTOSECOND;
+            } else {
+                throw new RuntimeException("Unsupported interval type [" + type.getName() + "]");
+            }
+        }
+        String typeName = sqlDataType.getTypeName();
         try {
             return DataType.valueOf(typeName.toUpperCase().replace(" ", ""));
         } catch (IllegalArgumentException e) {
