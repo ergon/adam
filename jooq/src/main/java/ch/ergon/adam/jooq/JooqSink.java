@@ -410,6 +410,9 @@ public class JooqSink implements SchemaSink {
             case TIME:
                 jooqType = SQLDataType.TIME;
                 break;
+            case INTERVALYEARTOSECOND:
+                jooqType = SQLDataType.INTERVAL;
+                break;
             case INTERVALYEARTOMONTH:
                 jooqType = SQLDataType.INTERVALYEARTOMONTH;
                 break;
