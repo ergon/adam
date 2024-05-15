@@ -199,6 +199,11 @@
               ]
             }
           },
+          "where": {
+            "$id": "#/properties/indexes/items/properties/where",
+            "type": "string",
+            "description": "Partial index condition."
+          },
           "primary": {
             "$id": "#/properties/indexes/items/properties/primary",
             "type": "boolean",

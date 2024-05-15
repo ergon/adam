@@ -1,7 +1,6 @@
 package ch.ergon.adam.jooq;
 
 import ch.ergon.adam.core.db.interfaces.SchemaSink;
-import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.core.db.schema.Constraint;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.ForeignKey;
@@ -9,6 +8,8 @@ import ch.ergon.adam.core.db.schema.Index;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Sequence;
 import ch.ergon.adam.core.db.schema.Table;
+import ch.ergon.adam.core.db.schema.*;
+import com.google.common.base.Strings;
 import org.jooq.DataType;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -26,6 +27,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
+import static org.jooq.impl.DSL.trueCondition;
 import static org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE;
 
 public class JooqSink implements SchemaSink {
@@ -115,7 +117,11 @@ public class JooqSink implements SchemaSink {
             } else {
                 createIndex = context.createIndex(index.getName());
             }
-            createIndex.on(getTableName(index.getTable()), fieldNames).execute();
+            Condition indexCondition = Strings.isNullOrEmpty(index.getWhere()) ? trueCondition() : DSL.condition(index.getWhere());
+            createIndex
+                .on(getTableName(index.getTable()), fieldNames)
+                .where(indexCondition)
+                .execute();
         }
     }
 

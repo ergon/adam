@@ -280,6 +280,7 @@ public class YmlSink implements SchemaSink {
         YmlIndex ymlIndex = new YmlIndex(index.getName());
         ymlIndex.setPrimary(index.isPrimary());
         ymlIndex.setUnique(index.isUnique());
+        ymlIndex.setWhere(index.getWhere());
         ymlIndex.setFields(createSchemaItemNameArray(index.getFields()));
         return ymlIndex;
     }
