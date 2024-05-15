@@ -27,7 +27,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
-import static org.jooq.impl.DSL.trueCondition;
+import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE;
 
 public class JooqSink implements SchemaSink {
@@ -117,11 +117,12 @@ public class JooqSink implements SchemaSink {
             } else {
                 createIndex = context.createIndex(index.getName());
             }
-            Condition indexCondition = Strings.isNullOrEmpty(index.getWhere()) ? trueCondition() : DSL.condition(index.getWhere());
-            createIndex
-                .on(getTableName(index.getTable()), fieldNames)
-                .where(indexCondition)
-                .execute();
+            CreateIndexIncludeStep indexStep = createIndex.on(getTableName(index.getTable()), fieldNames);
+            if (Strings.isNullOrEmpty(index.getWhere())) {
+                indexStep.execute();
+            } else {
+                indexStep.where(DSL.condition(index.getWhere())).execute();
+            }
         }
     }
 

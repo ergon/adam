@@ -1,9 +1,10 @@
 package ch.ergon.adam.sqlite;
 
-import ch.ergon.adam.core.db.schema.Index;
 import ch.ergon.adam.jooq.JooqSink;
+import ch.ergon.adam.core.db.schema.Index;
 import com.google.common.base.Strings;
 import org.jooq.Condition;
+import org.jooq.CreateIndexIncludeStep;
 import org.jooq.CreateIndexStep;
 import org.jooq.Name;
 import org.jooq.impl.DSL;
@@ -39,11 +40,13 @@ public class SqliteSink extends JooqSink {
             } else {
                 createIndex = context.createIndex();
             }
-            Condition indexCondition = Strings.isNullOrEmpty(index.getWhere()) ? trueCondition() : DSL.condition(index.getWhere());
-            createIndex
-                .on(getTableName(index.getTable()), fieldNames)
-                .where(indexCondition)
-                .execute();
+
+            CreateIndexIncludeStep indexStep = createIndex.on(getTableName(index.getTable()), fieldNames);
+            if (Strings.isNullOrEmpty(index.getWhere())) {
+                indexStep.execute();
+            } else {
+                indexStep.where(DSL.condition(index.getWhere())).execute();
+            }
         } else {
             super.createIndex(index);
         }
