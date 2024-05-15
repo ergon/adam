@@ -150,6 +150,9 @@ public class JooqSource implements SchemaSource {
         Index index = new Index(jooqIndex.getName());
         index.setFields(jooqIndex.getFields().stream().map(jooqField -> table.getField(jooqField.getName())).collect(toList()));
         index.setUnique(jooqIndex.getUnique());
+        if (jooqIndex.getWhere() != null) {
+            index.setWhere(jooqIndex.getWhere().toString());
+        }
         UniqueKey<?> primaryKey = jooqIndex.getTable().getPrimaryKey();
         if (primaryKey != null) {
             String[] primaryKeyFieldNames = primaryKey.getFields().stream().map(TableField::getName).toArray(String[]::new);
