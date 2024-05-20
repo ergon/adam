@@ -59,6 +59,8 @@ public abstract class IndexTests extends AbstractDbTestBase {
         // Verify
         assertFalse(schema.getTable("test_table").getField("id").isNullable());
         assertThat(schema.getTable("test_table").getIndexes().size(), is(2));
-        assertThat(schema.getTable("test_table").getIndex("partial_idx").getWhere(), is("col1 = 'test'"));
+        if (!this.getClass().getSimpleName().contains("Sqlite")) { // https://github.com/jOOQ/jOOQ/issues/16683
+            assertThat(schema.getTable("test_table").getIndex("partial_idx").getWhere(), is("(((col1)::text = 'test'::text))"));
+        }
     }
 }
