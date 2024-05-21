@@ -232,7 +232,8 @@ public class SchemaDiffExtractor {
     private void processIndexes(Index sourceIndex, Index targetIndex, MigrationStrategy strategy) {
         if (sourceIndex.isUnique() != targetIndex.isUnique()
             || sourceIndex.isPrimary() != targetIndex.isPrimary()
-            || !Arrays.equals(createSchemaItemNameArray(sourceIndex.getFields()), createSchemaItemNameArray(targetIndex.getFields()))) {
+            || !Arrays.equals(createSchemaItemNameArray(sourceIndex.getFields()), createSchemaItemNameArray(targetIndex.getFields()))
+            || !Objects.equals(sourceIndex.getWhere(), targetIndex.getWhere())) {
             strategy.indexUpdated(sourceIndex, targetIndex);
         }
     }

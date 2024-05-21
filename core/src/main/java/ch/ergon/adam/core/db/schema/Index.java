@@ -10,6 +10,7 @@ public class Index extends TableItem {
     private boolean isPrimary;
     private boolean isUnique;
     private List<Field> fields;
+    private String where;
     private final Set<ForeignKey> referencingForeignKeys = new LinkedHashSet<>();
 
     public Index(String name) {
@@ -39,6 +40,14 @@ public class Index extends TableItem {
 
     public void setUnique(boolean unique) {
         isUnique = unique;
+    }
+
+    public String getWhere() {
+        return where;
+    }
+
+    public void setWhere(String where) {
+        this.where = where;
     }
 
     public void addReferencingForeignKey(ForeignKey foreignKey) {

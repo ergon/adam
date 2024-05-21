@@ -193,6 +193,7 @@ public class YmlSource implements SchemaSource {
         Index index = new Index(indexName);
         index.setPrimary(ymlIndex.isPrimary());
         index.setUnique(ymlIndex.isPrimary() ? true : ymlIndex.isUnique());
+        index.setWhere(ymlIndex.getWhere());
         index.setFields(stream(ymlIndex.getFields())
             .map(name -> requireNonNull(table.getField(name), format("field %s.%s not found for index %s", table.getName(), name, ymlIndex.getName())))
             .collect(toList()));

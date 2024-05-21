@@ -18,6 +18,9 @@ fields:
   - name: "col4"
     dataType: "VARCHAR"
     length: 10
+  - name: "col5"
+    dataType: "VARCHAR"
+    nullable: true
 foreignKeys: []
 indexes:
   - name: "test_table_col1_key"
@@ -29,4 +32,8 @@ indexes:
       - "id"
     primary: true
     unique: true
+  - name: "test_table_partial_key"
+    fields:
+      - "col5"
+    where: "col5 is null"
 ruleConstraints: []

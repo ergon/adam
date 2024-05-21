@@ -6,6 +6,7 @@ public class YmlIndex extends YmlSchemaItem {
 
     private boolean isPrimary;
     private boolean isUnique;
+    private String where;
     private String[] fields = new String[0];
 
     public YmlIndex(@JsonProperty("name")String name) {
@@ -30,6 +31,14 @@ public class YmlIndex extends YmlSchemaItem {
 
     public boolean isUnique() {
         return isUnique;
+    }
+
+    public String getWhere() {
+        return where;
+    }
+
+    public void setWhere(String where) {
+        this.where = where;
     }
 
     public void setUnique(boolean unique) {
