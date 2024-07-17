@@ -5,10 +5,7 @@ import ch.ergon.adam.core.db.schema.DbEnum;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Sequence;
 import ch.ergon.adam.core.db.schema.Table;
-import org.jooq.DSLContext;
-import org.jooq.DataType;
-import org.jooq.Record;
-import org.jooq.Result;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultDataType;
 
@@ -76,8 +73,11 @@ public class PostgreSqlSink extends JooqSink {
     protected DataType<?> mapFieldToJooqType(Field field) {
         switch (field.getDataType()) {
             case ENUM:
-                DataType<?> jooqType = new DefaultDataType<>(null, VARCHAR, field.getDbEnum().getName(), field.getDbEnum().getName());
-                return jooqType;
+                if (field.isArray()) {
+                    return new DefaultDataType<>(null, String[].class, field.getDbEnum().getName() + "[]", field.getDbEnum().getName() + "[]");
+                } else {
+                    return new DefaultDataType<>(null, VARCHAR, field.getDbEnum().getName(), field.getDbEnum().getName());
+                }
             default:
                 return super.mapFieldToJooqType(field);
         }
