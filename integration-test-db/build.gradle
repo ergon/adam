@@ -4,4 +4,4 @@ plugins {
 
 group 'ch.ergon.adam'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 21

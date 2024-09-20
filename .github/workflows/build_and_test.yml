@@ -5,18 +5,7 @@ on: [ push, pull_request]
 jobs:
   container-job:
     runs-on: ubuntu-latest
-    container: adoptopenjdk:8-jdk
-
-    services:
-      postgres:
-        image: postgres:10
-        env:
-          POSTGRES_PASSWORD: password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    container: eclipse-temurin:21-jdk
 
     steps:
       - name: Install dependencies
@@ -27,9 +16,9 @@ jobs:
       - name: Build
         run: ./gradlew -S -i assemble
       - name: Test
-        run: ./gradlew -S -i test -Ppostgresql_database_url="jdbc:postgresql://postgres:5432/postgres?user=postgres&password=password"
+        run: ./gradlew -S -i test
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: ./**/build/test-results/**/*.xml

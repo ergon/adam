@@ -38,7 +38,6 @@ public class SqliteSource extends JooqSource {
         schema.setViews(getViews());
         schema.getViews().forEach(view -> view.setFields(schema.getTable(view.getName()).getFields()));
         schema.getTables().removeIf(table -> schema.getView(table.getName()) != null);
-        setPrimaryKeys(schema);
         setSequences(schema);
         return schema;
     }
@@ -55,26 +54,6 @@ public class SqliteSource extends JooqSource {
         View view = new View(viewName);
         view.setViewDefinition(viewDefinition);
         return view;
-    }
-
-    private void setPrimaryKeys(Schema schema) {
-        for (Table table : schema.getTables()) {
-            Result<Record> result = getContext().resultQuery("PRAGMA table_info('test_table')").fetch();
-            for (Record record : result) {
-                if (record.getValue("pk", Integer.class) == 0) {
-                    continue;
-                }
-                String fieldName = record.getValue("name", String.class);
-                Index primaryKeyIndex = new Index("pk");
-                primaryKeyIndex.setPrimary(true);
-                primaryKeyIndex.setUnique(true);
-                primaryKeyIndex.setFields(newArrayList(table.getField(fieldName)));
-                List<Index> newIndexList = Lists.newArrayList(primaryKeyIndex);
-                newIndexList.addAll(table.getIndexes());
-                table.setIndexes(newIndexList);
-                break;
-            }
-        }
     }
 
     private void setSequences(Schema schema) {

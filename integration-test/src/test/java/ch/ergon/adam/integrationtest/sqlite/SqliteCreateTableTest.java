@@ -90,14 +90,14 @@ public abstract class SqliteCreateTableTest extends AbstractDbTestBase {
         assertNull(field.getDbEnum());
         assertThat(field.getDataType(), is(DataType.VARCHAR));
 
-        Index index = table.getIndex("pk");
+        Index index = table.getIndexes().stream().filter(Index::isPrimary).findFirst().orElse(null);
         assertNotNull(index);
         assertTrue(index.isPrimary());
         assertTrue(index.isUnique());
         assertThat(index.getFields().size(), is(1));
         assertThat(index.getFields().get(0).getName(), is("id"));
 
-        index = table.getIndex("test_table_col1_idx");
+        index = table.getIndexes().stream().filter(i -> !i.isPrimary()).findFirst().orElse(null);
         assertNotNull(index);
         assertFalse(index.isPrimary());
         assertTrue(index.isUnique());

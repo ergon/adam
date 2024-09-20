@@ -26,6 +26,8 @@ import static java.util.stream.Collectors.toList;
 public class PostgreSqlSource extends JooqSource {
 
     private static final Pattern CHECK_CONSTRAINT_PATTERN = Pattern.compile("^CHECK \\((.*)\\)$");
+    private static final Pattern DEFAULT_CAST_PATTERN = Pattern.compile("cast\\((.*) as [^ ^)]+( array)?\\)");
+
 
     private final String schemaName;
     private Map<String, DbEnum> enums;
@@ -108,10 +110,9 @@ public class PostgreSqlSource extends JooqSource {
         if (defaultValue == null) {
             return null;
         }
-        if (jooqField.getDataType().isArray() && defaultValue.endsWith("[]")) {
-            defaultValue = defaultValue.substring(0, defaultValue.length() - 2);
-        }
-        return defaultValue.replaceAll("::[a-z A-Z_]*", "");
+        Matcher matcher = DEFAULT_CAST_PATTERN.matcher(defaultValue);
+        defaultValue = matcher.replaceAll(r -> r.group(1) );
+        return defaultValue;
     }
 
     private void fetchViewDependencies(Schema schema) {
@@ -249,7 +250,7 @@ public class PostgreSqlSource extends JooqSource {
 
     @Override
     protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField) {
-        String typeName = jooqField.getDataType().getTypeName();
+        String typeName = jooqField.getDataType().isArray() ? jooqField.getDataType().getArrayComponentDataType().getTypeName() : jooqField.getDataType().getTypeName();
         switch (typeName) {
             case "other":
                 return null; // Will be set later
@@ -257,7 +258,7 @@ public class PostgreSqlSource extends JooqSource {
                 // Only if type is array of text
                 return DataType.CLOB;
         }
-        if (enums.containsKey(typeName)) {
+        if (enums.containsKey(typeName) || enums.containsKey(typeName.replaceFirst("_", ""))) {
             return ENUM;
         }
         return super.mapDataTypeFromJooq(jooqField);

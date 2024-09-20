@@ -1,23 +1,22 @@
 package ch.ergon.adam.integrationtest;
 
+import org.testcontainers.containers.PostgreSQLContainer;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.lang.String.format;
 
 public class PostgreSqlToSqliteTestDbUrlProvider extends TestDbUrlProvider {
 
-    private static final String DATABASE_URL_PROPERTY = "postgresql_database_url";
-    private static final String DATABASE_URL_DEFAULT = "jdbc:postgresql://localhost:5432/test?user=test&password=test";
+    private final static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15-alpine");
+
     private static final String SOURCE_SCHEMA = "test-source";
     protected static final String TARGET_SCHEMA = "test-target";
-    private static Map<String, Connection> connectionsByUrl = new HashMap<>();
     private final Path tempFolder;
 
     public PostgreSqlToSqliteTestDbUrlProvider() throws IOException {
@@ -55,7 +54,10 @@ public class PostgreSqlToSqliteTestDbUrlProvider extends TestDbUrlProvider {
     }
 
     private String getPostgreSqlDbUrl() {
-        return System.getProperty(DATABASE_URL_PROPERTY, DATABASE_URL_DEFAULT);
+        if (!container.isRunning()) {
+            container.start();
+        }
+        return container.getJdbcUrl() + "&user=" + container.getUsername() + "&password=" + container.getPassword();
     }
 
 }
