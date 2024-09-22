@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+    id "ch.ergon.gradle.goodies.versioning"
+}
+
+ext.jooqProUser = hasProperty("jooqProUser") ? property("jooqProUser").toString() : rootProject.getLocalProperty("JOOQ_PRO_USER")
+ext.jooqProPassword = hasProperty("jooqProPassword") ? property("jooqProPassword").toString() : rootProject.getLocalProperty("JOOQ_PRO_PASSWORD")
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://repo.jooq.org/repo")
+        credentials {
+            username = jooqProUser
+            password = jooqProPassword
+        }
+    }
+}
+
+group 'ch.ergon.adam'
+description 'The Oracle plugin for ADAM'
+
+sourceCompatibility = 21
+
+dependencies {
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    implementation project(':jooq')
+    implementation 'com.oracle.database.jdbc:ojdbc11:23.5.0.24.07'
+    implementation group: 'org.jooq.pro', name: 'jooq', version: '3.19.11'
+}
+
+apply from: "${rootProject.projectDir}/publish.gradle"
+apply from: "${rootProject.projectDir}/common.gradle"

@@ -15,9 +15,7 @@ import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.util.List;
 
-import static ch.ergon.adam.core.Adam.DEFAULT_ADAM_PACKAGE;
-import static ch.ergon.adam.core.Adam.DEFAULT_MAIN_RESOURCE_PATH;
-import static ch.ergon.adam.core.Adam.HISTORY_FILE_NAME;
+import static ch.ergon.adam.core.Adam.*;
 import static ch.ergon.adam.core.prepost.MigrationStep.PREMIGRATION_ONCE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

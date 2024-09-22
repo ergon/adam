@@ -5,9 +5,7 @@ import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import org.junit.jupiter.api.Test;
 
-import static ch.ergon.adam.core.db.schema.DataType.BIGINT;
-import static ch.ergon.adam.core.db.schema.DataType.DECIMAL_INTEGER;
-import static ch.ergon.adam.core.db.schema.DataType.NUMERIC;
+import static ch.ergon.adam.core.db.schema.DataType.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

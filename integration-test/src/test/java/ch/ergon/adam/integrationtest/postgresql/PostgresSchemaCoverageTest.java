@@ -5,7 +5,7 @@ import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.schema.Schema;
 
-public class PostgresSchemaCoverageTest extends AbstractSchemaCoverageTest {
+public class PostgresSchemaCoverageTest extends AbstractPostgreSQLSchemaCoverageTest {
 
     @Override
     protected Schema executeTransformation(SchemaSource source) throws Exception {

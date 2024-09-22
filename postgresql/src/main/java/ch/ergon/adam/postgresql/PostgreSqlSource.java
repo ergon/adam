@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
@@ -20,8 +21,7 @@ import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 public class PostgreSqlSource extends JooqSource {
 
@@ -51,57 +51,9 @@ public class PostgreSqlSource extends JooqSource {
         Schema schema = super.getSchema();
         schema.setSequences(getSequences());
         schema.setEnums(enums.values());
-        schema.setViews(getViews());
-        schema.getViews().forEach(view -> view.setFields(schema.getTable(view.getName()).getFields()));
-        schema.getTables().removeIf(table -> schema.getView(table.getName()) != null);
-        fetchDefaults(schema);
         setCustomTypes(schema);
         fetchConstraints(schema);
-        fetchViewDependencies(schema);
         return schema;
-    }
-
-    private void fetchDefaults(Schema schema) {
-        //TODO: Remove as soon as https://github.com/jOOQ/jOOQ/issues/8875 is fixed
-
-        Result<Record> result = getContext().resultQuery(
-            "SELECT column_name, column_default, table_name\n" +
-                "FROM information_schema.columns where table_schema = ? and column_default is not null", schemaName).fetch();
-
-        for (Record record : result) {
-            String tableName = record.getValue("table_name").toString();
-            String columnName = record.getValue("column_name").toString();
-            String defaultValue = record.getValue("column_default").toString();
-
-            Table table = schema.getTable(tableName);
-            if (table == null) {
-                continue;
-            }
-
-            Field field = table.getField(columnName);
-            if (field == null || field.isSequence() || (field.getDefaultValue() != null && field.getDefaultValue() != "null")) {
-                continue;
-            }
-
-            field.setDefaultValue(defaultValue);
-        }
-
-        for (Table table : schema.getTables()) {
-            for (Field field : table.getFields()) {
-                String defaultValue = field.getDefaultValue();
-                if (defaultValue == null) {
-                    continue;
-                }
-
-                if (field.isArray() && defaultValue.endsWith("[]")) {
-                    defaultValue = defaultValue.substring(0, defaultValue.length() - 2);
-                }
-
-                field.setDefaultValue(defaultValue.replaceAll("::[a-z A-Z_]*", ""));
-            }
-
-        }
-
     }
 
     @Override
@@ -115,9 +67,10 @@ public class PostgreSqlSource extends JooqSource {
         return defaultValue;
     }
 
-    private void fetchViewDependencies(Schema schema) {
+    @Override
+    protected Map<String, List<String>> fetchViewDependencies() {
         Result<Record> result = getContext().resultQuery(
-            "SELECT cl_r.relname AS view, cl_d.relname AS base, cl_d.relkind basetype " +
+            "SELECT cl_r.relname AS view, cl_d.relname AS base " +
                 "FROM pg_rewrite AS r " +
                 "JOIN pg_class AS cl_r ON r.ev_class=cl_r.oid " +
                 "JOIN pg_depend AS d ON r.oid = d.objid " +
@@ -126,15 +79,10 @@ public class PostgreSqlSource extends JooqSource {
                 "WHERE cl_d.relkind IN ('v', 'r') and cl_r.relname != cl_d.relname AND ns.nspname = ? " +
                 "GROUP BY cl_r.relname, cl_d.relname, cl_d.relkind", schemaName).fetch();
 
-        for (Record record : result) {
-            String viewName = record.getValue("view").toString();
-            String baseName = record.getValue("base").toString();
-            String baseType = record.getValue("basetype").toString();
-
-            View view = schema.getView(viewName);
-            Relation relation = "v".equals(baseType) ? schema.getView(baseName) : schema.getTable(baseName);
-            view.addBaseRelation(relation);
-        }
+        return result.stream()
+            .collect(
+                groupingBy(r -> r.getValue("view").toString(),
+                mapping(r -> r.getValue("base").toString(), toList())));
     }
 
     private void setCustomTypes(Schema schema) {
@@ -235,17 +183,10 @@ public class PostgreSqlSource extends JooqSource {
         return dbEnum;
     }
 
-    private Collection<View> getViews() {
-        Result<Record> result = getContext().resultQuery("select table_name, view_definition from INFORMATION_SCHEMA.views where table_schema = ?", schemaName).fetch();
-        return result.stream().map(this::mapViewFromJooq).sorted(comparing(View::getName)).collect(toList());
-    }
-
-    private View mapViewFromJooq(Record record) {
-        String viewName = record.getValue("table_name").toString();
-        String viewDefinition = record.getValue("view_definition").toString();
-        View view = new View(viewName);
-        view.setViewDefinition(viewDefinition);
-        return view;
+    @Override
+    protected String getViewDefinition(String name) {
+        Result<Record> result = getContext().resultQuery("select view_definition from INFORMATION_SCHEMA.views where table_schema = ? and table_name = ?", schemaName, name).fetch();
+        return result.getFirst().getValue("view_definition").toString();
     }
 
     @Override

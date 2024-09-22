@@ -194,6 +194,11 @@ public class YmlSink implements SchemaSink {
         // Noop
     }
 
+    @Override
+    public void adjustSequences(Table table) {
+        // Noop
+    }
+
     private void writeTableToFile(Table table) throws IOException {
         YmlTable ymlTable = mapToYml(table);
         writeToFileOrStream(ymlTable, Helper.getTableFileName(table));

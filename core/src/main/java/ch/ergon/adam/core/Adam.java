@@ -219,23 +219,23 @@ public class Adam {
     }
 
     private void ensureNoInProgressMigrations(SqlExecutor sqlExecutor) {
-        Object result = sqlExecutor.queryResult(format("SELECT COUNT(1) FROM %s WHERE execution_completed_at IS NULL", SCHEMA_VERSION_TABLE_NAME));
-        if (!(result.equals(0L) || result.equals(0))) {
+        Object result = sqlExecutor.queryResult(format("SELECT COUNT(1) FROM \"%s\" WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        if (Integer.parseInt(result.toString()) != 0) {
             throw new RuntimeException("There is an unfinished migration in [" + SCHEMA_VERSION_TABLE_NAME + "]");
         }
     }
 
     private String getDbSchemaVersion(SqlExecutor sqlExecutor) {
-        Object result = sqlExecutor.queryResult(format("SELECT target_version FROM %s ORDER BY execution_started_at DESC", SCHEMA_VERSION_TABLE_NAME));
+        Object result = sqlExecutor.queryResult(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
         return result == null ? null : result.toString();
     }
 
     private void createSchemaVersionEntry(SqlExecutor sqlExecutor, String fromVersion, String toVersion) {
-        sqlExecutor.queryResult(format("INSERT INTO %s (execution_started_at, source_version, target_version) VALUES (CURRENT_TIMESTAMP, ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
+        sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (CURRENT_TIMESTAMP, ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
     }
 
     private void completeSchemaVersionEntry(SqlExecutor sqlExecutor) {
-        sqlExecutor.queryResult(format("UPDATE %s SET execution_completed_at = CURRENT_TIMESTAMP WHERE execution_completed_at IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = CURRENT_TIMESTAMP WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
     }
 
     public void setAllowUnknownDBVersion(boolean allowUnknownDBVersion) {

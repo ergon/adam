@@ -1,12 +1,10 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
+import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
-import ch.ergon.adam.core.db.schema.Schema;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostgreSqlArrayFieldTest extends AbstractDbTestBase {

@@ -21,6 +21,7 @@ Supported:
 - YML-Files
 - PostgreSQL
 - SQLite
+- Oracle
 
 ### Schema sink
 
@@ -31,6 +32,7 @@ Supported:
 - YML-Files
 - PostgreSQL
 - SQLite
+- Oracle
 
 ### Automated schema migrator
 
@@ -69,7 +71,7 @@ In case of the **Once**-scripts the script executor needs to decide which script
 artificial version of the software. On every migration, the current version is stored in a separate table `db_schema_version` on the database itself. To check
 which scripts need to be executed, the script executor checks which scripts have been added since the current version of the database. The order of execution is
 then given by the artificial version.
-
+za
 ---
 **NOTE**
 

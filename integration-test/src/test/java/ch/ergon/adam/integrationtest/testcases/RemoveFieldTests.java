@@ -1,10 +1,10 @@
 package ch.ergon.adam.integrationtest.testcases;
 
+import ch.ergon.adam.core.db.schema.Schema;
+import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
-import ch.ergon.adam.core.db.schema.Schema;
-import ch.ergon.adam.core.db.schema.Table;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class RemoveFieldTests extends AbstractDbTestBase {
 
     private static final String CREATE_TABLE_SQL =
-        "create table test_table (" +
-            "col1 int, " +
-            "col2 int " +
+        "create table \"test_table\" (" +
+            "\"col1\" int, " +
+            "\"col2\" int " +
             ")";
 
     private static final String INSERT_DATA_SQL =
-        "insert into test_table values (2, 3)";
+        "insert into \"test_table\" values (2, 3)";
 
     public RemoveFieldTests(TestDbUrlProvider testDbUrlProvider) {
         super(testDbUrlProvider);
@@ -53,7 +53,7 @@ public abstract class RemoveFieldTests extends AbstractDbTestBase {
         assertThat(table.getFields().size(), is(1));
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(col1) from test_table");
+        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"col1\") from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(2));
     }
@@ -83,7 +83,7 @@ public abstract class RemoveFieldTests extends AbstractDbTestBase {
         assertThat(newTable.getFields().size(), is(1));
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(col1) from new_table");
+        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"col1\") from \"new_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(2));
     }

@@ -165,6 +165,12 @@ public class LoggingSinkWrapper implements SchemaSink {
     }
 
     @Override
+    public void adjustSequences(Table table) {
+        logger.info("Adjust sequences for table [{}]", table.getName());
+        wrappedSink.adjustSequences(table);
+    }
+
+    @Override
     public void close() throws Exception {
         wrappedSink.close();
     }

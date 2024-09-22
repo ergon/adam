@@ -12,9 +12,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static ch.ergon.adam.core.Adam.DEFAULT_ADAM_PACKAGE;
-import static ch.ergon.adam.core.Adam.DEFAULT_MAIN_RESOURCE_PATH;
-import static ch.ergon.adam.core.Adam.TARGET_VERSION_FILE_NAME;
+import static ch.ergon.adam.core.Adam.*;
 import static ch.ergon.adam.core.prepost.db_schema_version.DbSchemaVersionSource.SCHEMA_VERSION_TABLE_NAME;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;

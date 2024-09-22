@@ -51,7 +51,9 @@ public class JooqSink implements SchemaSink {
 
     protected JooqSink(Connection dbConnection, SQLDialect dialect, String schema) {
         context = DSL.using(dbConnection, dialect);
-        context.createSchemaIfNotExists(schema).execute();
+        if (!dialect.family().name().contains("ORACLE")) {
+            context.createSchemaIfNotExists(schema).execute();
+        }
         this.schema = schema;
     }
 
@@ -94,7 +96,7 @@ public class JooqSink implements SchemaSink {
     public void createForeignKey(ForeignKey foreignKey) {
         Index targetIndex = foreignKey.getTargetIndex();
         org.jooq.Constraint constraint = DSL.constraint(foreignKey.getName()).foreignKey(foreignKey.getField().getName())
-            .references(targetIndex.getTable().getName(), targetIndex.getFields().get(0).getName());
+            .references(targetIndex.getTable().getName(), targetIndex.getFields().getFirst().getName());
         context.alterTable(foreignKey.getTable().getName()).add(constraint).execute();
     }
 
@@ -250,10 +252,15 @@ public class JooqSink implements SchemaSink {
             .filter(Field::isSequence)
             .forEach(field -> context.alterTable(table.getName())
                 .alterColumn(field.getName())
-                .defaultValue(DSL.field("null"))
+                .dropDefault()
                 .execute());
 
         //TODO: implement drop of sequences
+    }
+
+    @Override
+    public void adjustSequences(Table table) {
+
     }
 
     @Override

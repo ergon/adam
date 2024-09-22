@@ -45,7 +45,7 @@ ext.getLocalProperty = { key, file = "local.properties" ->
     def properties = new Properties()
     def localProperties = new File(rootProject.rootDir, file)
     if (localProperties.isFile()) {
-        new InputStreamReader(new FileInputStream(localProperties), UTF_8).with {properties.load}
+        new InputStreamReader(new FileInputStream(localProperties), UTF_8).with {properties.load(it)}
         return properties.getProperty(key, "")
     } else {
         return null

@@ -1,12 +1,12 @@
 package ch.ergon.adam.integrationtest.testcases;
 
+import ch.ergon.adam.core.db.SchemaDiffExtractor;
+import ch.ergon.adam.core.db.schema.Schema;
+import ch.ergon.adam.core.db.schema.Sequence;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.AssertAnyChangeStrategy;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
-import ch.ergon.adam.core.db.SchemaDiffExtractor;
-import ch.ergon.adam.core.db.schema.Schema;
-import ch.ergon.adam.core.db.schema.Sequence;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;

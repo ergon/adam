@@ -1,11 +1,11 @@
 package ch.ergon.adam.integrationtest;
 
-import ch.ergon.adam.yml.YmlSink;
 import ch.ergon.adam.core.db.SchemaMigrator;
 import ch.ergon.adam.core.db.SourceAndSinkFactory;
 import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.schema.Schema;
+import ch.ergon.adam.yml.YmlSink;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 

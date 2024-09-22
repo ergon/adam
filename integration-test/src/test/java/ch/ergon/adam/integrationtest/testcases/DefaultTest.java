@@ -1,9 +1,9 @@
 package ch.ergon.adam.integrationtest.testcases;
 
+import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
-import ch.ergon.adam.core.db.schema.Schema;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -12,20 +12,23 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class DefaultTest extends AbstractDbTestBase {
 
-    private static final String CREATE_TABLE_INT_DEFAULT_SQL =
-        "create table test_table (" +
+    protected String getCreateTableIntDefaultSql() {
+        return "create table test_table (" +
             "id bigint default 1 " +
             ")";
+    }
 
-    private static final String CREATE_TABLE_STRING_DEFAULT_SQL =
-        "create table test_table (" +
+    protected String getCreateTableStringDefaultSql() {
+        return "create table test_table (" +
             "id VARCHAR default 'defaultValue' " +
             ")";
+    }
 
-    private static final String CREATE_TABLE_FUNCTION_DEFAULT_SQL =
-        "create table test_table (" +
+    protected String getCreateTableFunctionDefaultSql() {
+        return "create table test_table (" +
             "id bigint default char_length('defaultValue') " +
             ")";
+    }
 
     public DefaultTest(TestDbUrlProvider testDbUrlProvider) {
         super(testDbUrlProvider);
@@ -33,20 +36,20 @@ public abstract class DefaultTest extends AbstractDbTestBase {
 
     @Test
     public void testIntDefault() throws Exception {
-        doTestDefault(CREATE_TABLE_INT_DEFAULT_SQL, "1");
+        doTestDefault(getCreateTableIntDefaultSql(), "1");
     }
 
     @Test
     public void testStringDefault() throws Exception {
-        doTestDefault(CREATE_TABLE_STRING_DEFAULT_SQL, "'defaultValue'");
+        doTestDefault(getCreateTableStringDefaultSql(), "'defaultValue'");
     }
 
     @Test
     public void testFunctionDefault() throws Exception {
-        doTestDefault(CREATE_TABLE_FUNCTION_DEFAULT_SQL, "char_length('defaultValue')");
+        doTestDefault(getCreateTableFunctionDefaultSql(), "char_length('defaultValue')");
     }
 
-    private void doTestDefault(String sql, String expectedDefault) throws Exception {
+    protected void doTestDefault(String sql, String expectedDefault) throws Exception {
 
         // Setup db
         getSourceDbConnection().createStatement().execute(sql);
@@ -64,7 +67,7 @@ public abstract class DefaultTest extends AbstractDbTestBase {
 
     @Test
     public void testDropDefault() throws Exception {
-        getSourceDbConnection().createStatement().execute(CREATE_TABLE_INT_DEFAULT_SQL);
+        getSourceDbConnection().createStatement().execute(getCreateTableIntDefaultSql());
         sourceToTarget();
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
@@ -80,7 +83,7 @@ public abstract class DefaultTest extends AbstractDbTestBase {
 
     @Test
     public void testChangeDefault() throws Exception {
-        getSourceDbConnection().createStatement().execute(CREATE_TABLE_INT_DEFAULT_SQL);
+        getSourceDbConnection().createStatement().execute(getCreateTableIntDefaultSql());
         sourceToTarget();
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();

@@ -1,10 +1,10 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
+import ch.ergon.adam.core.db.SchemaDiffExtractor;
+import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.AssertAnyChangeStrategy;
-import ch.ergon.adam.core.db.SchemaDiffExtractor;
-import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

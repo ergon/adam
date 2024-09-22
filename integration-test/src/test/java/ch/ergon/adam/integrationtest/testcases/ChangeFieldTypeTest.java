@@ -1,11 +1,11 @@
 package ch.ergon.adam.integrationtest.testcases;
 
-import ch.ergon.adam.integrationtest.AbstractDbTestBase;
-import ch.ergon.adam.integrationtest.DummySink;
-import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
+import ch.ergon.adam.integrationtest.AbstractDbTestBase;
+import ch.ergon.adam.integrationtest.DummySink;
+import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,33 +14,34 @@ import java.util.Collections;
 import static ch.ergon.adam.core.db.schema.DataType.CLOB;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
 
-    private static final String CREATE_TABLE_SERIAL_SQL =
-        "create table test_table (" +
+    protected String getCreateTableSerialSql() {
+        return "create table test_table (" +
             "id bigserial " +
             ")";
+    }
 
-    private static final String CREATE_TABLE_NOT_NULL_SQL =
-        "create table test_table (" +
+    protected String getCreateTableNotNullSql() {
+        return "create table test_table (" +
             "test_field varchar not null " +
             ")";
+    }
 
-    private static final String CREATE_TABLE_NULL_SQL =
-        "create table test_table (" +
+    protected String getCreateTableNullSql() {
+        return "create table test_table (" +
             "test_field numeric(10,2) null " +
             ")";
+    }
 
-    private static final String CREATE_TABLE_TWO_FIELDS_SQL =
-        "create table test_table (" +
+    protected String getCreateTableTwoFieldsSql() {
+        return "create table test_table (" +
             "col1 text null, " +
             "col2 text null " +
             ")";
+    }
 
     public ChangeFieldTypeTest(TestDbUrlProvider testDbUrlProvider) {
         super(testDbUrlProvider);
@@ -50,7 +51,7 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
     public void changeFromSerialToClob() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SERIAL_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableSerialSql());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -84,7 +85,7 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
     public void changeNotNullToNull() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_NOT_NULL_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableNotNullSql());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -102,7 +103,7 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
     public void changeNullToNotNull() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_NULL_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableNullSql());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -120,7 +121,7 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
     public void changePrecision() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_NULL_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableNullSql());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -138,7 +139,7 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
     public void changeScale() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_NULL_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableNullSql());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -156,7 +157,7 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
     public void changeFieldOrder() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_TWO_FIELDS_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableTwoFieldsSql());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
