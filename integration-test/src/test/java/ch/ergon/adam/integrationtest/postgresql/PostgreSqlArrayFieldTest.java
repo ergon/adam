@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostgreSqlArrayFieldTest extends AbstractDbTestBase {
 
@@ -39,7 +40,7 @@ public class PostgreSqlArrayFieldTest extends AbstractDbTestBase {
         schema.getTable("test_table").getField("array_col").setDefaultValue("'{}'");
         migrateTargetWithSchema(schema);
         String yml = targetToYml();
-        assertThat(yml, is(YML));
+        assertEquals(YML, yml);
     }
 
 }

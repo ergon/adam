@@ -109,5 +109,12 @@ public abstract class AbstractDbTestBase {
         return baos.toString();
     }
 
+    protected String sourceToYml() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        YmlSink ymlSink = new YmlSink(baos);
+        new SchemaMigrator(new EmptySource(), getSourceDbSource(), ymlSink).migrate();
+        return baos.toString();
+    }
+
 
 }

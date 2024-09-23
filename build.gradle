@@ -1,3 +1,5 @@
+import static java.nio.charset.StandardCharsets.UTF_8
+
 buildscript {
     repositories {
         mavenCentral()
@@ -36,5 +38,16 @@ nexusPublishing {
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
+    }
+}
+
+ext.getLocalProperty = { key, file = "local.properties" ->
+    def properties = new Properties()
+    def localProperties = new File(rootProject.rootDir, file)
+    if (localProperties.isFile()) {
+        new InputStreamReader(new FileInputStream(localProperties), UTF_8).with {properties.load}
+        return properties.getProperty(key, "")
+    } else {
+        return null
     }
 }

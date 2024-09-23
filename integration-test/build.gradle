@@ -5,22 +5,27 @@ plugins {
 
 group 'ch.ergon.adam'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 21
 
 dependencies {
-    testCompile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.1'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
-    testCompile project(':core')
-    testCompile project(':yml')
-    testCompile project(':postgresql')
-    testCompile project(':sqlite')
-    testCompile project(':integration-test-db')
+    testImplementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    testImplementation project(':core')
+    testImplementation project(':yml')
+    testImplementation project(':postgresql')
+    testImplementation project(':sqlite')
+    testImplementation project(':integration-test-db')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testImplementation("org.testcontainers:testcontainers:1.20.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.1")
+    testImplementation("org.testcontainers:postgresql:1.20.1")
+    testImplementation("org.postgresql:postgresql:42.7.1")
+    testImplementation("org.testcontainers:oracle-free:1.20.1")
+    testImplementation('com.oracle.database.jdbc:ojdbc11:23.5.0.24.07')
 }
 
 test {
-    systemProperty "postgresql_database_url", project.findProperty("postgresql_database_url") ?: 'jdbc:postgresql://localhost:5432/test?user=test&password=test'
     useJUnitPlatform()
 }

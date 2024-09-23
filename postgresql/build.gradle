@@ -1,18 +1,17 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id "ch.ergon.gradle.goodies.versioning"
-    id 'maven'
 }
 
 group 'ch.ergon.adam'
 description 'The PostgreSQL plugin for ADAM'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 21
 
 dependencies {
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
-    compile project(':jooq')
-    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    implementation project(':jooq')
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
 }
 
 apply from: "${rootProject.projectDir}/publish.gradle"

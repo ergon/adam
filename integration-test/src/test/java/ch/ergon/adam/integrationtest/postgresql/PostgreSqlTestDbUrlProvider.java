@@ -4,6 +4,7 @@ import ch.ergon.adam.core.helper.Pair;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.postgresql.PostgreSqlFactory;
 import ch.ergon.adam.postgresql.PostgreSqlTransactionWrapper;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,8 +14,8 @@ import static java.lang.String.format;
 
 public class PostgreSqlTestDbUrlProvider extends TestDbUrlProvider {
 
-    private static final String DATABASE_URL_PROPERTY = "postgresql_database_url";
-    private static final String DATABASE_URL_DEFAULT = "jdbc:postgresql://localhost:5432/test?user=test&password=test";
+    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15-alpine");
+
     private static final String SOURCE_SCHEMA = "test-source";
     protected static final String TARGET_SCHEMA = "test-target";
 
@@ -43,7 +44,10 @@ public class PostgreSqlTestDbUrlProvider extends TestDbUrlProvider {
     }
 
     protected String getDbUrl() {
-        return System.getProperty(DATABASE_URL_PROPERTY, DATABASE_URL_DEFAULT);
+        if (!container.isRunning()) {
+            container.start();
+        }
+        return container.getJdbcUrl() + "&user=" + container.getUsername() + "&password=" + container.getPassword();
     }
 
     @Override

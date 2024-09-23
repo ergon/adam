@@ -142,23 +142,40 @@ public class JooqSource implements SchemaSource {
     private Table mapTableFromJooq(org.jooq.Table<?> jooqTable) {
         Table table = new Table(jooqTable.getName());
         table.setFields(stream(jooqTable.fields()).map(this::mapFieldFromJooq).collect(toList()));
-        table.setIndexes(jooqTable.getIndexes().stream().map(jooqIndex -> mapIndexFromJooq(table, jooqIndex)).collect(toList()));
+        List<Index> indexes = jooqTable.getIndexes().stream().map(jooqIndex -> mapIndexFromJooq(table, jooqIndex)).collect(toList());
+        if (jooqTable.getPrimaryKey() != null) {
+            indexes.add(mapPrimaryKeyFromJooq(table, jooqTable.getPrimaryKey()));
+        }
+        jooqTable.getUniqueKeys().stream().map(jooqKey -> mapUniqueKeyFromJooq(table, jooqKey)).forEach(indexes::add);
+        table.setIndexes(indexes);
         return table;
+    }
+
+    private Index mapPrimaryKeyFromJooq(Table table, UniqueKey<?> primaryKey) {
+        Index index = mapUniqueKeyFromJooq(table, primaryKey);
+        index.setPrimary(true);
+        return index;
+    }
+
+    private Index mapUniqueKeyFromJooq(Table table, UniqueKey<?> uniqueKey) {
+        Index index = mapKeyFromJooq(table, uniqueKey);
+        index.setUnique(true);
+        return index;
     }
 
     private Index mapIndexFromJooq(Table table, org.jooq.Index jooqIndex) {
         Index index = new Index(jooqIndex.getName());
-        index.setFields(jooqIndex.getFields().stream().map(jooqField -> table.getField(jooqField.getName())).collect(toList()));
-        index.setUnique(jooqIndex.getUnique());
         if (jooqIndex.getWhere() != null) {
             index.setWhere(jooqIndex.getWhere().toString());
         }
-        UniqueKey<?> primaryKey = jooqIndex.getTable().getPrimaryKey();
-        if (primaryKey != null) {
-            String[] primaryKeyFieldNames = primaryKey.getFields().stream().map(TableField::getName).toArray(String[]::new);
-            String[] indexFieldNames = jooqIndex.getFields().stream().map(SortField::getName).toArray(String[]::new);
-            index.setPrimary(Arrays.equals(primaryKeyFieldNames, indexFieldNames));
-        }
+        index.setUnique(jooqIndex.getUnique());
+        index.setFields(jooqIndex.getFields().stream().map(jooqField -> table.getField(jooqField.getName())).collect(toList()));
+        return index;
+    }
+
+    private Index mapKeyFromJooq(Table table, Key<?> jooqKey) {
+        Index index = new Index(jooqKey.getName());
+        index.setFields(jooqKey.getFields().stream().map(jooqField -> table.getField(jooqField.getName())).collect(toList()));
         return index;
     }
 
@@ -177,9 +194,9 @@ public class JooqSource implements SchemaSource {
             elementType = jooqType;
         }
 
-        field.setLength(elementType.hasLength() && elementType.length() < 20000000 ? elementType.length() : null);
-        field.setPrecision(elementType.hasPrecision() && elementType.precision() < 10000 ? elementType.precision() : null);
-        field.setScale(elementType.hasScale() ? elementType.scale() : null);
+        field.setLength(elementType.hasLength() && elementType.length() > 0 && elementType.length() < 20000000 ? elementType.length() : null);
+        field.setPrecision(elementType.hasPrecision() && elementType.precision() > 0 && elementType.precision() < 10000 ? elementType.precision() : null);
+        field.setScale(elementType.hasScale() && elementType.scale() > 0 ? elementType.scale() : null);
 
 
         field.setSequence(isSequence(jooqField));
@@ -191,7 +208,7 @@ public class JooqSource implements SchemaSource {
 
     protected String getDefaultValue(org.jooq.Field<?> jooqField) {
         org.jooq.Field<?> defaultValue = jooqField.getDataType().defaultValue();
-        return defaultValue.getName();
+        return defaultValue.toString();
     }
 
     protected boolean isSequence(org.jooq.Field<?> jooqField) {
@@ -211,8 +228,10 @@ public class JooqSource implements SchemaSource {
             } else {
                 throw new RuntimeException("Unsupported interval type [" + type.getName() + "]");
             }
+        } else if (sqlDataType.isNumeric() && jooqField.getDataType().precision() == 0 && jooqField.getDataType().scale() == 0) {
+            return DataType.DECIMAL_INTEGER;
         }
-        String typeName = sqlDataType.getTypeName();
+        String typeName = jooqField.getDataType().isArray() ? sqlDataType.getArrayBaseDataType().getTypeName() : sqlDataType.getTypeName();
         try {
             return DataType.valueOf(typeName.toUpperCase().replace(" ", ""));
         } catch (IllegalArgumentException e) {

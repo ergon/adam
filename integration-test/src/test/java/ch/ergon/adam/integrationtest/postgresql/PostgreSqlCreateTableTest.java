@@ -10,10 +10,7 @@ import static ch.ergon.adam.core.db.schema.DataType.DECIMAL_INTEGER;
 import static ch.ergon.adam.core.db.schema.DataType.NUMERIC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PostgreSqlCreateTableTest extends AbstractDbTestBase {
 
@@ -185,7 +182,7 @@ public class PostgreSqlCreateTableTest extends AbstractDbTestBase {
         getSourceDbConnection().createStatement().execute(CREATE_TABLE_SQL);
         sourceToTarget();
         String yml = targetToYml();
-        assertThat(yml, is(YML));
+        assertEquals(YML, yml);
     }
 
 }

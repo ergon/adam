@@ -9,10 +9,10 @@ import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Sequence;
 import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.core.db.schema.*;
-import com.google.common.base.Strings;
 import org.jooq.DataType;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultDataType;
 import org.jooq.impl.SQLDataType;
 
 import java.sql.Connection;
@@ -27,7 +27,6 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
-import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE;
 
 public class JooqSink implements SchemaSink {
@@ -74,6 +73,7 @@ public class JooqSink implements SchemaSink {
 
     @Override
     public void setTargetSchema(Schema targetSchema) {
+        targetSchema.getEnums().forEach( e -> new DefaultDataType<>(null, Object.class, e.getName()));
     }
 
     @Override
@@ -107,7 +107,7 @@ public class JooqSink implements SchemaSink {
     @Override
     public void createIndex(Index index) {
         if (index.isPrimary()) {
-            ConstraintFinalStep primaryKey = DSL.constraint(index.getName()).primaryKey(createSchemaItemNameArray(index.getFields()));
+            ConstraintEnforcementStep primaryKey = DSL.constraint(index.getName()).primaryKey(createSchemaItemNameArray(index.getFields()));
             context.alterTable(index.getTable().getName()).add(primaryKey).execute();
         } else {
             Collection<Name> fieldNames = index.getFields().stream().map(this::getFieldName).collect(toList());
@@ -118,7 +118,7 @@ public class JooqSink implements SchemaSink {
                 createIndex = context.createIndex(index.getName());
             }
             CreateIndexIncludeStep indexStep = createIndex.on(getTableName(index.getTable()), fieldNames);
-            if (Strings.isNullOrEmpty(index.getWhere())) {
+            if (index.getWhere() == null || index.getWhere().isEmpty()) {
                 indexStep.execute();
             } else {
                 indexStep.where(DSL.condition(index.getWhere())).execute();
@@ -155,8 +155,8 @@ public class JooqSink implements SchemaSink {
 
     @Override
     public void createTable(Table table) {
-        CreateTableColumnStep createTable = context.createTable(getTableName(table));
-        CreateTableColumnStep addRows = null;
+        CreateTableElementListStep createTable = context.createTable(getTableName(table));
+        CreateTableElementListStep addRows = null;
         for (Field field : table.getFields()) {
             if (addRows == null) {
                 addRows = createTable.column(field.getName(), mapType(field));
@@ -212,7 +212,7 @@ public class JooqSink implements SchemaSink {
     public void createConstraint(Constraint constraint) {
         if (constraint instanceof RuleConstraint) {
             RuleConstraint rule = (RuleConstraint)constraint;
-            ConstraintFinalStep check = DSL.constraint(constraint.getName()).check(DSL.condition(rule.getRule()));
+            ConstraintEnforcementStep check = DSL.constraint(constraint.getName()).check(DSL.condition(rule.getRule()));
             context.alterTable(constraint.getTable().getName()).add(check).execute();
         } else if (constraint instanceof PrimaryKeyConstraint) {
             // Handled together with index
