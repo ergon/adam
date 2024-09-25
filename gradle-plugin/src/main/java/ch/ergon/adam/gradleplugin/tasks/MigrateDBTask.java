@@ -11,6 +11,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -25,6 +26,8 @@ public class MigrateDBTask extends DefaultTask {
     private boolean migrateSameVersion;
     private boolean allowNonForwardMigration;
     private AdamExtension extension;
+    private Collection<String> excludes;
+    private Collection<String> includes;
 
 
     public MigrateDBTask() {
@@ -48,6 +51,8 @@ public class MigrateDBTask extends DefaultTask {
         adam.setAllowUnknownDBVersion(allowUnknownDBVersion);
         adam.setMigrateSameVersion(migrateSameVersion);
         adam.setAllowNonForwardMigration(allowNonForwardMigration);
+        adam.setIncludes(includes);
+        adam.setExcludes(excludes);
         adam.execute();
     }
 
@@ -113,5 +118,25 @@ public class MigrateDBTask extends DefaultTask {
 
     public void setAllowNonForwardMigration(boolean allowNonForwardMigration) {
         this.allowNonForwardMigration = allowNonForwardMigration;
+    }
+
+    @Input
+    @Optional
+    public Collection<String> getExcludes() {
+        return excludes;
+    }
+
+    public void setExcludes(Collection<String> excludes) {
+        this.excludes = excludes;
+    }
+
+    @Input
+    @Optional
+    public Collection<String> getIncludes() {
+        return includes;
+    }
+
+    public void setIncludes(Collection<String> includes) {
+        this.includes = includes;
     }
 }
