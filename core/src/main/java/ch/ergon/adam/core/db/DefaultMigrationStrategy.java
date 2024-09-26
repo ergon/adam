@@ -402,6 +402,8 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
 
         sink.copyData(sourceTable, targetTable, insertSourceTableName);
 
+        sink.adjustSequences(targetTable);
+
         sink.dropTable(new Table(insertSourceTableName));
     }
 }

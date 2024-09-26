@@ -138,6 +138,11 @@ public class DummySink implements SchemaSink {
     }
 
     @Override
+    public void adjustSequences(Table table) {
+
+    }
+
+    @Override
     public void close() {
 
     }

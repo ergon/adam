@@ -14,9 +14,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build
-        run: ./gradlew -S -i assemble
+        run: ./gradlew -S -i assemble -PjooqProUser=${{ secrets.JOOQ_PRO_USER }} -PjooqProPassword=${{ secrets.JOOQ_PRO_PASSWORD }}
       - name: Test
-        run: ./gradlew -S -i test
+        run: ./gradlew -S -i test -PjooqProUser=${{ secrets.JOOQ_PRO_USER }} -PjooqProPassword=${{ secrets.JOOQ_PRO_PASSWORD }}
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()

@@ -1,11 +1,11 @@
 package ch.ergon.adam.integrationtest.testcases;
 
-import ch.ergon.adam.integrationtest.AbstractDbTestBase;
-import ch.ergon.adam.integrationtest.DummySink;
-import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
+import ch.ergon.adam.integrationtest.AbstractDbTestBase;
+import ch.ergon.adam.integrationtest.DummySink;
+import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -19,15 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class CastFieldTypeTest extends AbstractDbTestBase {
 
-
-    protected static final String CREATE_TABLE_SQL =
-        "create table test_table (" +
-            "col1 varchar, " +
-            "col2 int " +
-            ")";
-
     protected static final String INSERT_DATA_SQL =
-        "insert into test_table values ('2', 2)";
+        "insert into \"test_table\" values ('2', 2)";
 
     public CastFieldTypeTest(TestDbUrlProvider testDbUrlProvider) {
         super(testDbUrlProvider);
@@ -37,7 +30,7 @@ public abstract class CastFieldTypeTest extends AbstractDbTestBase {
     public void testCastVarcharToInt() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableStatement());
         getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
@@ -55,7 +48,7 @@ public abstract class CastFieldTypeTest extends AbstractDbTestBase {
         assertNotNull(table);
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(col1) from test_table");
+        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"col1\") from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(2));
     }
@@ -64,7 +57,7 @@ public abstract class CastFieldTypeTest extends AbstractDbTestBase {
     public void testCastIntToVarchar() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableStatement());
         getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
@@ -82,10 +75,16 @@ public abstract class CastFieldTypeTest extends AbstractDbTestBase {
         assertNotNull(table);
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select count(col2) from test_table where col2= '2'");
+        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select count(\"col2\") from \"test_table\" where \"col2\"= '2'");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(1));
     }
 
-
+    protected String getCreateTableStatement() {
+        return
+            "create table \"test_table\" (" +
+                "\"col1\" varchar, " +
+                "\"col2\" int " +
+                ")";
+    }
 }

@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Comparator.comparing;
@@ -35,25 +36,21 @@ public class SqliteSource extends JooqSource {
     @Override
     public Schema getSchema() {
         Schema schema = super.getSchema();
-        schema.setViews(getViews());
-        schema.getViews().forEach(view -> view.setFields(schema.getTable(view.getName()).getFields()));
-        schema.getTables().removeIf(table -> schema.getView(table.getName()) != null);
         setSequences(schema);
         return schema;
     }
 
-    private Collection<View> getViews() {
-        Result<Record> result = getContext().resultQuery("select name, sql from sqlite_master where type = 'view'").fetch();
-        return result.stream().map(this::mapViewFromJooq).sorted(comparing(View::getName)).collect(toList());
+    @Override
+    protected String getViewDefinition(String name) {
+        Result<Record> result = getContext().resultQuery("select sql from sqlite_master where type = 'view' and name = ?", name).fetch();
+        String viewDefinition = result.getFirst().getValue("sql").toString();
+        viewDefinition = viewDefinition.replaceAll("^(?i)create view [^ ]+ as ", "");
+        return viewDefinition;
     }
 
-    private View mapViewFromJooq(Record record) {
-        String viewName = record.getValue("name").toString();
-        String viewDefinition = record.getValue("sql").toString();
-        viewDefinition = viewDefinition.replaceAll("^(?i)create view [^ ]+ as ", "");
-        View view = new View(viewName);
-        view.setViewDefinition(viewDefinition);
-        return view;
+    @Override
+    protected Map<String, List<String>> fetchViewDependencies() {
+        return Map.of();
     }
 
     private void setSequences(Schema schema) {

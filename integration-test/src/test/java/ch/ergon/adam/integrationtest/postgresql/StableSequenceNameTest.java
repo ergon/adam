@@ -1,9 +1,9 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
-import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
+import ch.ergon.adam.integrationtest.DummySink;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 

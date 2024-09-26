@@ -1,11 +1,11 @@
 package ch.ergon.adam.integrationtest.testcases;
 
-import ch.ergon.adam.integrationtest.AbstractDbTestBase;
-import ch.ergon.adam.integrationtest.DummySink;
-import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
+import ch.ergon.adam.integrationtest.AbstractDbTestBase;
+import ch.ergon.adam.integrationtest.DummySink;
+import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;

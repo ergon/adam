@@ -1,13 +1,13 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
-import ch.ergon.adam.integrationtest.EmptySource;
-import ch.ergon.adam.yml.YmlSink;
-import ch.ergon.adam.yml.YmlSource;
 import ch.ergon.adam.core.db.SchemaMigrator;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.filetree.DirectoryTraverser;
 import ch.ergon.adam.core.helper.FileHelper;
+import ch.ergon.adam.integrationtest.EmptySource;
+import ch.ergon.adam.yml.YmlSink;
+import ch.ergon.adam.yml.YmlSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class YmlSchemaCoverageTest extends AbstractSchemaCoverageTest {
+public class YmlSchemaCoverageTest extends AbstractPostgreSQLSchemaCoverageTest {
 
     private static Path tempFolder;
 

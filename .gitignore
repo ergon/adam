@@ -5,3 +5,4 @@ build/
 /integration-test-db/src/main/resources/adamd/target_version
 gradle-plugin-test/.gradle/
 gradle.properties
+local.properties

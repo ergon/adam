@@ -34,3 +34,13 @@ gradlePlugin {
         }
     }
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "localPluginRepository"
+            url = uri("/tmp/adam/local-gradle-plugin-repository")
+        }
+    }
+}
+

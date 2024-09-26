@@ -204,6 +204,11 @@ public class PostgreSqlTransactionWrapper implements SchemaSource, SchemaSink, S
     }
 
     @Override
+    public void adjustSequences(Table table) {
+        sqlSink.adjustSequences(table);
+    }
+
+    @Override
     public void executeScript(String script) {
         sqlExecutor.executeScript(script);
     }

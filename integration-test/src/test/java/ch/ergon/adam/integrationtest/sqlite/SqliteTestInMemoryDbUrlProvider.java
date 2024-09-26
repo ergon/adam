@@ -1,8 +1,8 @@
 package ch.ergon.adam.integrationtest.sqlite;
 
+import ch.ergon.adam.core.helper.Pair;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.sqlite.SqliteInMemoryFactory;
-import ch.ergon.adam.core.helper.Pair;
 
 import java.io.IOException;
 import java.sql.Connection;

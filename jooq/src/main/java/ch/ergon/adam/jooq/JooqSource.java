@@ -1,6 +1,7 @@
 package ch.ergon.adam.jooq;
 
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
+import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.core.db.schema.DataType;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.ForeignKey;
@@ -16,19 +17,19 @@ import org.jooq.types.YearToSecond;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static org.jooq.TableOptions.TableType.TABLE;
+import static org.jooq.TableOptions.TableType.VIEW;
 
-public class JooqSource implements SchemaSource {
+public abstract class JooqSource implements SchemaSource {
 
     private final Connection connection;
     private final String schemaName;
@@ -65,7 +66,7 @@ public class JooqSource implements SchemaSource {
 
     protected Meta getMeta() {
         if (meta == null) {
-            meta = extractMeta(schemaName);
+            meta = JooqUtils.extractMeta(getContext(), schemaName);
         }
         return meta;
     }
@@ -75,18 +76,6 @@ public class JooqSource implements SchemaSource {
             context = DSL.using(connection, sqlDialect);
         }
         return context;
-    }
-
-    private Meta extractMeta(String schemaName) {
-        if (schemaName == null) {
-            return getContext().meta();
-        }
-        List<org.jooq.Schema> schemas = getContext().meta().getSchemas(schemaName);
-        if (schemas.isEmpty()) {
-            String knownSchemas = getContext().meta().getSchemas().stream().map(Named::getName).collect(Collectors.joining(","));
-            throw new RuntimeException("Schema [" + schemaName + "] not found. Known schemas are [" + knownSchemas + "]");
-        }
-        return getContext().meta(schemas.get(0));
     }
 
     @Override
@@ -104,11 +93,17 @@ public class JooqSource implements SchemaSource {
 
         Schema schema = new Schema();
         schema.setTables(getTables());
+        schema.setViews(getViews());
+        setViewDependencies(schema);
         return schema;
     }
 
     private Collection<Table> getTables() {
         List<org.jooq.Table<?>> jooqTables = getMeta().getTables();
+
+        jooqTables = jooqTables.stream()
+            .filter(table -> table.getOptions().type() == TABLE)
+            .toList();
 
         Map<String, Table> tables = jooqTables.stream()
             .map(this::mapTableFromJooq)
@@ -117,6 +112,35 @@ public class JooqSource implements SchemaSource {
 
         mapForeignKeys(jooqTables, tables);
         return tables.values();
+    }
+
+    private Collection<View> getViews() {
+        List<org.jooq.Table<?>> jooqTables = getMeta().getTables();
+
+        Map<String, View> views = jooqTables.stream()
+            .filter(table -> table.getOptions().type() == VIEW)
+            .map(this::mapViewFromJooq)
+            .sorted(comparing(View::getName))
+            .collect(toLinkedMap(View::getName, identity()));
+        return views.values();
+    }
+
+    private void setViewDependencies(Schema schema) {
+        Map<String, List<String>> dependencies = fetchViewDependencies();
+        schema.getViews().stream()
+            .filter(v -> dependencies.containsKey(v.getName()))
+            .forEach(v -> {
+                dependencies.get(v.getName()).stream().map(base -> {
+                        Relation r = schema.getTable(base);
+                        if (r == null) {
+                            r = schema.getView(base);
+                        }
+                        return r;
+                    })
+                    .filter(Objects::nonNull)
+                    .forEach(v::addBaseRelation);
+            });
+
     }
 
     private void mapForeignKeys(List<org.jooq.Table<?>> jooqTables, Map<String, Table> tables) {
@@ -129,7 +153,11 @@ public class JooqSource implements SchemaSource {
 
     private ForeignKey mapForeignKeyFromJooq(Map<String, Table> tables, org.jooq.ForeignKey<?,?> jooqForeignKey) {
         Table table = tables.get(jooqForeignKey.getTable().getName());
-        ForeignKey foreignKey = new ForeignKey(jooqForeignKey.getName());
+        String name = jooqForeignKey.getName();
+        if (isGeneratedName(name)) {
+            name = null;
+        }
+        ForeignKey foreignKey = new ForeignKey(name);
         if (jooqForeignKey.getFields().size() != 1) {
             throw new RuntimeException("Table [" + table.getName() + "] contains a foreign key over multiple fields. This is not yet supported.");
         }
@@ -137,6 +165,10 @@ public class JooqSource implements SchemaSource {
         Table foreignTable = tables.get(jooqForeignKey.getKey().getTable().getName());
         foreignKey.setTargetIndex(foreignTable.getIndex(jooqForeignKey.getKey().getName()));
         return foreignKey;
+    }
+
+    protected boolean isGeneratedName(String name) {
+        return false;
     }
 
     private Table mapTableFromJooq(org.jooq.Table<?> jooqTable) {
@@ -150,6 +182,17 @@ public class JooqSource implements SchemaSource {
         table.setIndexes(indexes);
         return table;
     }
+
+    private View mapViewFromJooq(org.jooq.Table<?> jooqTable) {
+        View view = new View(jooqTable.getName());
+        view.setFields(stream(jooqTable.fields()).map(this::mapFieldFromJooq).collect(toList()));
+        view.setViewDefinition(getViewDefinition(view.getName()));
+        return view;
+    }
+
+    abstract protected String getViewDefinition(String name);
+
+    abstract protected Map<String, List<String>> fetchViewDependencies();
 
     private Index mapPrimaryKeyFromJooq(Table table, UniqueKey<?> primaryKey) {
         Index index = mapUniqueKeyFromJooq(table, primaryKey);
@@ -169,17 +212,23 @@ public class JooqSource implements SchemaSource {
             index.setWhere(jooqIndex.getWhere().toString());
         }
         index.setUnique(jooqIndex.getUnique());
-        index.setFields(jooqIndex.getFields().stream().map(jooqField -> table.getField(jooqField.getName())).collect(toList()));
+        index.setFields(jooqIndex.getFields().stream()
+            .map(jooqField -> table.getField(jooqField.getName()))
+            .filter(Objects::nonNull)
+            .collect(toList()));
         return index;
     }
 
     private Index mapKeyFromJooq(Table table, Key<?> jooqKey) {
         Index index = new Index(jooqKey.getName());
-        index.setFields(jooqKey.getFields().stream().map(jooqField -> table.getField(jooqField.getName())).collect(toList()));
+        index.setFields(jooqKey.getFields().stream()
+            .map(jooqField -> table.getField(jooqField.getName()))
+            .filter(Objects::nonNull)
+            .collect(toList()));
         return index;
     }
 
-    private Field mapFieldFromJooq(org.jooq.Field<?> jooqField) {
+    protected Field mapFieldFromJooq(org.jooq.Field<?> jooqField) {
         Field field = new Field(jooqField.getName());
         field.setArray(jooqField.getDataType().isArray());
         field.setDataType(mapDataTypeFromJooq(jooqField));
@@ -197,7 +246,6 @@ public class JooqSource implements SchemaSource {
         field.setLength(elementType.hasLength() && elementType.length() > 0 && elementType.length() < 20000000 ? elementType.length() : null);
         field.setPrecision(elementType.hasPrecision() && elementType.precision() > 0 && elementType.precision() < 10000 ? elementType.precision() : null);
         field.setScale(elementType.hasScale() && elementType.scale() > 0 ? elementType.scale() : null);
-
 
         field.setSequence(isSequence(jooqField));
         if (!field.isSequence() && jooqField.getDataType().defaulted()) {

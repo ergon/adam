@@ -1,9 +1,9 @@
 package ch.ergon.adam.integrationtest.testcases;
 
+import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
-import ch.ergon.adam.core.db.schema.Schema;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -13,17 +13,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public abstract class ViewTests extends AbstractDbTestBase {
 
     private static final String CREATE_TABLE_SQL =
-        "create table test_table (" +
-            "id integer null " +
+        "create table \"test_table\" (" +
+            "\"id\" integer null " +
             ")";
 
     private static final String CREATE_VIEW1_SQL =
-        "create view view1 as " +
-            "select * from test_table";
+        "create view \"view1\" as " +
+            "select * from \"test_table\"";
 
     private static final String CREATE_VIEW2_SQL =
-        "create view view2 as " +
-            "select * from test_table";
+        "create view \"view2\" as " +
+            "select * from \"test_table\"";
 
     public ViewTests(TestDbUrlProvider testDbUrlProvider) {
         super(testDbUrlProvider);

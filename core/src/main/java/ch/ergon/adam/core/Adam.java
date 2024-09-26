@@ -11,13 +11,16 @@ import ch.ergon.adam.core.prepost.GitVersionTree;
 import ch.ergon.adam.core.prepost.MigrationScriptProvider;
 import ch.ergon.adam.core.prepost.MigrationStep;
 import ch.ergon.adam.core.prepost.MigrationStepExecutor;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static ch.ergon.adam.core.prepost.MigrationStep.POSTMIGRATION_ALWAYS;
 import static ch.ergon.adam.core.prepost.MigrationStep.POSTMIGRATION_INIT;
@@ -27,6 +30,7 @@ import static ch.ergon.adam.core.prepost.MigrationStep.PREMIGRATION_INIT;
 import static ch.ergon.adam.core.prepost.MigrationStep.PREMIGRATION_ONCE;
 import static ch.ergon.adam.core.prepost.db_schema_version.DbSchemaVersionSource.SCHEMA_VERSION_TABLE_NAME;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.ClassLoader.getSystemResourceAsStream;
 import static java.lang.String.format;
 
@@ -49,6 +53,8 @@ public class Adam {
     private boolean allowUnknownDBVersion = false;
     private boolean allowNonForwardMigration = false;
     private boolean migrateSameVersion = false;
+    private Collection<String> includes;
+    private Collection<String> excludes;
 
 
     public static Adam usingGitRepo(String referenceSchemaUrl, String targetUrl, String targetVersion, File migrationScriptPath, File gitRepo) throws IOException {
@@ -163,7 +169,7 @@ public class Adam {
                     MigrationStepExecutor executor = new MigrationStepExecutor(migrationScriptProvider, targetExecutor);
                     executor.executeStep(PREMIGRATION_ALWAYS);
                     executor.executeStep(PREMIGRATION_ONCE);
-                    SchemaMigrator.migrate(referenceUrl, targetUrl);
+                    SchemaMigrator.migrate(referenceUrl, targetUrl, getMigrationConfig());
                     executor.executeStep(POSTMIGRATION_ONCE);
                     executor.executeStep(POSTMIGRATION_ALWAYS);
                 } else {
@@ -172,7 +178,7 @@ public class Adam {
                     if (isDbInit) {
                         executor.executeStep(PREMIGRATION_INIT);
                     }
-                    SchemaMigrator.migrate(referenceUrl, targetUrl);
+                    SchemaMigrator.migrate(referenceUrl, targetUrl, getMigrationConfig());
                     if (isDbInit) {
                         executor.executeStep(POSTMIGRATION_INIT);
                     }
@@ -188,6 +194,17 @@ public class Adam {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private MigrationConfiguration getMigrationConfig() {
+        MigrationConfiguration migrationConfiguration = new MigrationConfiguration();
+        Set<String> excludeList = newHashSet(SCHEMA_VERSION_TABLE_NAME);
+        if (excludes != null) {
+            excludeList.addAll(excludes);
+        }
+        migrationConfiguration.setObjectNameExcludeList(excludeList);
+        migrationConfiguration.setObjectNameIncludeList(includes);
+        return migrationConfiguration;
     }
 
     private void logExecutionOrder(MigrationScriptProvider migrationScriptProvider) {
@@ -219,23 +236,23 @@ public class Adam {
     }
 
     private void ensureNoInProgressMigrations(SqlExecutor sqlExecutor) {
-        Object result = sqlExecutor.queryResult(format("SELECT COUNT(1) FROM %s WHERE execution_completed_at IS NULL", SCHEMA_VERSION_TABLE_NAME));
-        if (!(result.equals(0L) || result.equals(0))) {
+        Object result = sqlExecutor.queryResult(format("SELECT COUNT(1) FROM \"%s\" WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        if (Integer.parseInt(result.toString()) != 0) {
             throw new RuntimeException("There is an unfinished migration in [" + SCHEMA_VERSION_TABLE_NAME + "]");
         }
     }
 
     private String getDbSchemaVersion(SqlExecutor sqlExecutor) {
-        Object result = sqlExecutor.queryResult(format("SELECT target_version FROM %s ORDER BY execution_started_at DESC", SCHEMA_VERSION_TABLE_NAME));
+        Object result = sqlExecutor.queryResult(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
         return result == null ? null : result.toString();
     }
 
     private void createSchemaVersionEntry(SqlExecutor sqlExecutor, String fromVersion, String toVersion) {
-        sqlExecutor.queryResult(format("INSERT INTO %s (execution_started_at, source_version, target_version) VALUES (CURRENT_TIMESTAMP, ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
+        sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (CURRENT_TIMESTAMP, ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
     }
 
     private void completeSchemaVersionEntry(SqlExecutor sqlExecutor) {
-        sqlExecutor.queryResult(format("UPDATE %s SET execution_completed_at = CURRENT_TIMESTAMP WHERE execution_completed_at IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = CURRENT_TIMESTAMP WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
     }
 
     public void setAllowUnknownDBVersion(boolean allowUnknownDBVersion) {
@@ -260,5 +277,13 @@ public class Adam {
 
     public void setAllowNonForwardMigration(boolean allowNonForwardMigration) {
         this.allowNonForwardMigration = allowNonForwardMigration;
+    }
+
+    public void setIncludes(Collection<String> includes) {
+        this.includes = includes;
+    }
+
+    public void setExcludes(Collection<String> excludes) {
+        this.excludes = excludes;
     }
 }

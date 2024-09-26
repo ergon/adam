@@ -21,6 +21,7 @@ Supported:
 - YML-Files
 - PostgreSQL
 - SQLite
+- Oracle
 
 ### Schema sink
 
@@ -31,6 +32,7 @@ Supported:
 - YML-Files
 - PostgreSQL
 - SQLite
+- Oracle
 
 ### Automated schema migrator
 
@@ -151,6 +153,10 @@ adam {
     allowUnknownDBVersion
     // Execute migration even if source (DB) version is not an ancestor of the target version.
     allowNonForwardMigration
+    // Exclude list of objects during migration
+    excludes
+    // Consider list of objects during migration
+    includes
   }
 }
 ```

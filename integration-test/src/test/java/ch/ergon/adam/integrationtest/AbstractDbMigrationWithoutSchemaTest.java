@@ -1,7 +1,6 @@
 package ch.ergon.adam.integrationtest;
 
 import ch.ergon.adam.core.Adam;
-import ch.ergon.adam.integrationtest.postgresql.AbstractPostgresqlTestBase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +11,7 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static ch.ergon.adam.core.Adam.DEFAULT_ADAM_PACKAGE;
-import static ch.ergon.adam.core.Adam.DEFAULT_MAIN_RESOURCE_PATH;
-import static ch.ergon.adam.core.Adam.TARGET_VERSION_FILE_NAME;
+import static ch.ergon.adam.core.Adam.*;
 import static ch.ergon.adam.core.prepost.db_schema_version.DbSchemaVersionSource.SCHEMA_VERSION_TABLE_NAME;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -22,7 +19,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DbMigrationWithoutSchemaTest extends AbstractPostgresqlTestBase {
+public abstract class AbstractDbMigrationWithoutSchemaTest extends AbstractDbTestBase {
+
+    public AbstractDbMigrationWithoutSchemaTest(TestDbUrlProvider testDbUrlProvider) {
+        super(testDbUrlProvider);
+    }
+
 
     private static final String DB_VERSION_UNKNOWN = "6";
     private static final String DB_VERSION_5 = "5";
@@ -42,20 +44,20 @@ public class DbMigrationWithoutSchemaTest extends AbstractPostgresqlTestBase {
     }
 
     private String getCurrentSchemaVersion() throws SQLException {
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT target_version FROM %s ORDER BY execution_started_at DESC", SCHEMA_VERSION_TABLE_NAME));
+        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
         assertTrue(result.next());
         return result.getString(1);
     }
 
     private int countMigrations() throws SQLException {
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT count(*) FROM %s", SCHEMA_VERSION_TABLE_NAME));
+        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT count(*) FROM \"%s\"", SCHEMA_VERSION_TABLE_NAME));
         assertTrue(result.next());
         return result.getInt(1);
     }
 
 
     private void setCurrentSchemaVersion(String version) throws SQLException {
-        getTargetDbConnection().createStatement().execute(format("UPDATE %s SET target_version = '%s'", SCHEMA_VERSION_TABLE_NAME, version));
+        getTargetDbConnection().createStatement().execute(format("UPDATE \"%s\" SET \"target_version\" = '%s'", SCHEMA_VERSION_TABLE_NAME, version));
     }
 
     @Test

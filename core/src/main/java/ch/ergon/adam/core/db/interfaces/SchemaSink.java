@@ -57,4 +57,6 @@ public interface SchemaSink extends AutoCloseable {
     default boolean supportAlterAndDropField() {
         return true;
     }
+
+    void adjustSequences(Table table);
 }

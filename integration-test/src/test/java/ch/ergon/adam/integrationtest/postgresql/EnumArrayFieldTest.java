@@ -1,10 +1,10 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
-import ch.ergon.adam.integrationtest.AbstractDbTestBase;
-import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.core.db.schema.DataType;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Schema;
+import ch.ergon.adam.integrationtest.AbstractDbTestBase;
+import ch.ergon.adam.integrationtest.DummySink;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 

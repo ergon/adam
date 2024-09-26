@@ -10,10 +10,7 @@ import static ch.ergon.adam.core.db.schema.DataType.INTEGER;
 import static ch.ergon.adam.core.db.schema.DataType.NUMERIC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class SqliteCreateTableTest extends AbstractDbTestBase {
 

@@ -1,10 +1,10 @@
 package ch.ergon.adam.integrationtest.postgresql;
 
-import ch.ergon.adam.integrationtest.DummySink;
-import ch.ergon.adam.integrationtest.testcases.CastFieldTypeTest;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
+import ch.ergon.adam.integrationtest.DummySink;
+import ch.ergon.adam.integrationtest.testcases.CastFieldTypeTest;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ public class PostgreSqlCastFieldTypeTests extends CastFieldTypeTest {
     public void testCastVarcharToSerial() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
+        getTargetDbConnection().createStatement().execute(getCreateTableStatement());
         getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
