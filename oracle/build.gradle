@@ -23,7 +23,7 @@ description 'The Oracle plugin for ADAM'
 sourceCompatibility = 21
 
 dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.1'
     implementation project(':jooq')
     implementation 'com.oracle.database.jdbc:ojdbc11:23.5.0.24.07'
     implementation group: 'org.jooq.pro', name: 'jooq', version: '3.19.11'

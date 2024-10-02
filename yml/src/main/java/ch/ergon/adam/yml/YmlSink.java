@@ -1,11 +1,11 @@
 package ch.ergon.adam.yml;
 
+import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.yml.schema.*;
-import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,26 +24,28 @@ public class YmlSink implements SchemaSink {
     private final File targetPath;
     private final OutputStream outputStream;
     private final ObjectMapper mapper;
-    private Set<Table> updatedTables = new HashSet<>();
-    private Set<Table> droppedTables = new HashSet<>();
-    private Set<View> updatedViews = new HashSet<>();
-    private Set<View> droppedViews = new HashSet<>();
+    private final Set<Table> updatedTables = new HashSet<>();
+    private final Set<Table> droppedTables = new HashSet<>();
+    private final Set<View> updatedViews = new HashSet<>();
+    private final Set<View> droppedViews = new HashSet<>();
     private Schema targetSchema;
 
     public YmlSink(File targetPath) {
         this.targetPath = targetPath;
         this.outputStream = null;
-        mapper = new ObjectMapper(new YAMLFactory());
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-        mapper.setSerializationInclusion(NON_DEFAULT);
+        mapper = YAMLMapper.builder()
+            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .serializationInclusion(NON_DEFAULT)
+            .build();
     }
 
     public YmlSink(OutputStream outputStream) {
         this.targetPath = null;
         this.outputStream = outputStream;
-        mapper = new ObjectMapper(new YAMLFactory());
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-        mapper.setSerializationInclusion(NON_DEFAULT);
+        mapper = YAMLMapper.builder()
+            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .serializationInclusion(NON_DEFAULT)
+            .build();
     }
 
     @Override

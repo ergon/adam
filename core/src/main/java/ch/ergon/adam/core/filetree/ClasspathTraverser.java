@@ -1,17 +1,14 @@
 package ch.ergon.adam.core.filetree;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import ch.ergon.adam.core.reflection.ReflectionHelper;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
 public class ClasspathTraverser implements FileTreeTraverser {
 
-    private final Reflections reflections;
     private final String path;
 
     public ClasspathTraverser(String path) {
@@ -20,25 +17,16 @@ public class ClasspathTraverser implements FileTreeTraverser {
         } else {
             this.path = path + "/";
         }
-        reflections = new Reflections(this.path, new ResourcesScanner());
     }
 
     @Override
     public InputStream openFile(String fileName) {
-        Set<String> resources = reflections.getResources(name -> name.equals(fileName));
-        if (resources.isEmpty()) {
-            return null;
-        }
-        if (resources.size() > 1) {
-            throw new RuntimeException("Found multiple resources with name [" + fileName + "].");
-        }
-        String filePath = resources.iterator().next();
-        return getClass().getClassLoader().getResourceAsStream(filePath);
+        return ClassLoader.getSystemClassLoader().getResourceAsStream(path + fileName);
     }
 
     @Override
     public List<String> getFileNames() {
-        return reflections.getResources(name -> true).stream()
+        return ReflectionHelper.findAllRessourcesForPath(path).stream()
             .map(name -> name.replaceFirst(path, ""))
             .sorted()
             .collect(toList());

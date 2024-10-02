@@ -9,10 +9,10 @@ description 'The YML plugin for ADAM'
 sourceCompatibility = 21
 
 dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.12.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.1'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.18.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.18.0'
     implementation project(':core')
 }
 
