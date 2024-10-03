@@ -4,5 +4,7 @@ out/
 build/
 /integration-test-db/src/main/resources/adamd/target_version
 gradle-plugin-test/.gradle/
+gradle-plugin-test/gradle/
+gradle-plugin-test/gradlew*
 gradle.properties
 local.properties

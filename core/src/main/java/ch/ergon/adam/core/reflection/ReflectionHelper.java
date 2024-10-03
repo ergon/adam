@@ -16,7 +16,7 @@ public class ReflectionHelper {
     private static Set<Class<?>> findAllClassesForPackage(String packageName) {
         if (!classesByPackageCache.containsKey(packageName)) {
             try {
-                Set<Class<?>> classes = ClassPath.from(ClassLoader.getSystemClassLoader()).getAllClasses()
+                Set<Class<?>> classes = ClassPath.from(ReflectionHelper.class.getClassLoader()).getAllClasses()
                     .stream()
                     .filter(c -> c.getPackageName().startsWith(packageName))
                     .map(ClassPath.ClassInfo::getName)
