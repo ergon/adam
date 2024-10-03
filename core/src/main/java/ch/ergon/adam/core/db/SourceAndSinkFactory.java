@@ -4,7 +4,7 @@ import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SourceAndSinkAdapter;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
-import org.reflections.Reflections;
+import ch.ergon.adam.core.reflection.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,7 @@ public class SourceAndSinkFactory {
     }
 
     private SourceAndSinkFactory() {
-        Reflections reflections = new Reflections("ch.ergon.adam");
-        Set<Class<? extends SourceAndSinkAdapter>> adapterTypes = reflections.getSubTypesOf(SourceAndSinkAdapter.class);
+        Set<Class<? extends SourceAndSinkAdapter>> adapterTypes  = ReflectionHelper.findAllSubClasses("ch.ergon.adam", SourceAndSinkAdapter.class);
         adapters = adapterTypes.stream().map(this::createAdapterInstance).filter(Objects::nonNull).collect(toList());
         adapters.forEach(adapter -> {
             logger.debug("New migration adapter registered [" + adapter.getClass().getName() + "]");

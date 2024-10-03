@@ -1,7 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '0.15.0'
+    id 'com.gradle.plugin-publish' version '1.3.0'
     id "ch.ergon.gradle.goodies.versioning"
 }
 
@@ -17,20 +17,16 @@ dependencies {
 
 apply from: "${rootProject.projectDir}/common.gradle"
 
-
-pluginBundle {
+gradlePlugin {
     website = 'https://github.com/ergon/adam/'
     vcsUrl = 'https://github.com/ergon/adam.git'
-    tags = ['database', 'schema', 'migration', 'postgresql', 'sqlite', 'jooq', 'ergon']
-}
-
-gradlePlugin {
     plugins {
         adamPlugin {
             id = 'ch.ergon.adam'
             displayName = 'ADAM Plugin'
             description = 'Advanced DAtabase Migration to migrate database schema'
             implementationClass = 'ch.ergon.adam.gradleplugin.AdamPlugin'
+            tags = ['database', 'schema', 'migration', 'postgresql', 'sqlite', 'jooq', 'ergon']
         }
     }
 }

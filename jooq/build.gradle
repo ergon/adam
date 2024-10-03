@@ -9,7 +9,7 @@ description 'The jOOQ plugin for ADAM'
 sourceCompatibility = 21
 
 dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.1'
     api project(':core')
     implementation group: 'org.jooq', name: 'jooq', version: '3.19.11'
 }
