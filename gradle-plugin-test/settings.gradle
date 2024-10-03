@@ -1,1 +1,11 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = "localPluginRepository"
+            url = uri("/tmp/adam/local-gradle-plugin-repository")
+        }
+    }
+}
+
 rootProject.name = 'adam-gradleplugin-test'
