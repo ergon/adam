@@ -23,15 +23,15 @@ import org.jooq.meta.TableDefinition;
 import org.jooq.meta.UDTDefinition;
 import org.jooq.meta.XMLSchemaCollectionDefinition;
 
+import ch.ergon.adam.core.db.SourceAndSinkFactory;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.ForeignKey;
 import ch.ergon.adam.core.db.schema.Index;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
-import ch.ergon.adam.yml.YmlFactory;
 
 public class AdamDatabase extends AbstractDatabase {
-	public static final String YML_SOURCE_PROPERTY = "ymlSource";
+	public static final String SOURCE_PROPERTY = "source";
 	private Schema schema;
 	private SchemaDefinition schemaDefinition;
 
@@ -178,8 +178,8 @@ public class AdamDatabase extends AbstractDatabase {
 
 	private void ensureSchema() {
 		if (schema == null) {
-			String source = (String) getProperties().get(YML_SOURCE_PROPERTY);
-			schema = new YmlFactory().createSource(source).getSchema();
+			String source = (String) getProperties().get(SOURCE_PROPERTY);
+			schema = SourceAndSinkFactory.getInstance().getSource(source).getSchema();
 			schemaDefinition = new SchemaDefinition(this, "", null);
 		}
 	}

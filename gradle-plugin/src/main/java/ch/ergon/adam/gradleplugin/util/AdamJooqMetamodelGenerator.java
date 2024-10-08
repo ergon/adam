@@ -16,13 +16,13 @@ public class AdamJooqMetamodelGenerator {
 
 	private String packageName;
 	private Path outputPath;
-	private String ymlSource;
+	private String source;
 	private String jooqConfig;
 
-	public AdamJooqMetamodelGenerator(String packageName, Path outputPath, String ymlSource, String jooqConfig) {
+	public AdamJooqMetamodelGenerator(String packageName, Path outputPath, String source, String jooqConfig) {
 		this.packageName = packageName;
 		this.outputPath = outputPath;
-		this.ymlSource = ymlSource;
+		this.source = source;
 		this.jooqConfig = jooqConfig;
 	}
 
@@ -43,7 +43,7 @@ public class AdamJooqMetamodelGenerator {
 		Generator generator = new Generator();
 		Database database = new Database();
 		database.setName(AdamDatabase.class.getName());
-		database.getProperties().add(new Property().withKey(AdamDatabase.YML_SOURCE_PROPERTY).withValue(ymlSource));
+		database.getProperties().add(new Property().withKey(AdamDatabase.SOURCE_PROPERTY).withValue(source));
 		generator.setDatabase(database);
 
 		Strategy strategy = new Strategy();

@@ -22,11 +22,11 @@ public class GenerateJooqMetamodelTask extends DefaultTask {
 	private Path outputPath;
 
 	@Input
-	private String ymlSource;
+	private String source;
 
 	@TaskAction
 	public void generateJooqMetamodel() throws Exception {
-		AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator(packageName, outputPath, ymlSource,
+		AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator(packageName, outputPath, getSource(),
 				jooqConfig);
 		generator.run();
 	}
@@ -55,12 +55,12 @@ public class GenerateJooqMetamodelTask extends DefaultTask {
 		this.outputPath = outputPath;
 	}
 
-	public String getYmlSource() {
-		return ymlSource;
+	public String getSource() {
+		return source;
 	}
 
-	public void setYmlSource(String ymlSource) {
-		this.ymlSource = ymlSource;
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 }

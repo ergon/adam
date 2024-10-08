@@ -13,7 +13,6 @@ sourceCompatibility = 21
 dependencies {
     implementation gradleApi()
     implementation project(':core')
-    implementation project(':yml')
     implementation group: 'org.jooq', name: 'jooq-codegen', version: '3.19.11'
 }
 
