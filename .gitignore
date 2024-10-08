@@ -8,3 +8,7 @@ gradle-plugin-test/gradle/
 gradle-plugin-test/gradlew*
 gradle.properties
 local.properties
+bin/
+.settings/
+.project
+.classpath

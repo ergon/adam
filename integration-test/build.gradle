@@ -30,6 +30,7 @@ dependencies {
     testImplementation project(':oracle')
     testImplementation project(':sqlite')
     testImplementation project(':integration-test-db')
+    testImplementation project(':gradle-plugin')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.1'
     testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '3.0'
