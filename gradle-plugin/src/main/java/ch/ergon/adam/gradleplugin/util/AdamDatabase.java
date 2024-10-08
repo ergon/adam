@@ -1,6 +1,7 @@
 package ch.ergon.adam.gradleplugin.util;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -100,13 +101,13 @@ public class AdamDatabase extends AbstractDatabase {
 	@Override
 	protected List<CatalogDefinition> getCatalogs0() throws SQLException {
 		ensureSchema();
-		return List.of(new CatalogDefinition(this, "", ""));
+		return mutableList(new CatalogDefinition(this, "", ""));
 	}
 
 	@Override
 	protected List<SchemaDefinition> getSchemata0() throws SQLException {
 		ensureSchema();
-		return List.of(new SchemaDefinition(this, "", null));
+		return mutableList(new SchemaDefinition(this, "", null));
 	}
 
 	@Override
@@ -168,6 +169,12 @@ public class AdamDatabase extends AbstractDatabase {
 
 	private TableDefinition getTable(Table table) {
 		return getTable(schemaDefinition, table.getName());
+	}
+
+	private <T> List<T> mutableList(T value) {
+		List<T> list = new ArrayList<>();
+		list.add(value);
+		return list;
 	}
 
 	private void ensureSchema() {
