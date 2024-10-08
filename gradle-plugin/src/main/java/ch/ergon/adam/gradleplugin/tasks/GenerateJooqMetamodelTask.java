@@ -1,8 +1,10 @@
 package ch.ergon.adam.gradleplugin.tasks;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.Directory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
@@ -19,14 +21,15 @@ public class GenerateJooqMetamodelTask extends DefaultTask {
 	private String packageName;
 
 	@Input
-	private Path outputPath;
+	private String outputPath;
 
 	@Input
 	private String source;
 
 	@TaskAction
 	public void generateJooqMetamodel() throws Exception {
-		AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator(packageName, outputPath, getSource(),
+		Path output = getProject().getLayout().getProjectDirectory().dir(outputPath).getAsFile().toPath();
+		AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator(packageName, output, getSource(),
 				jooqConfig);
 		generator.run();
 	}
@@ -47,11 +50,11 @@ public class GenerateJooqMetamodelTask extends DefaultTask {
 		this.packageName = packageName;
 	}
 
-	public Path getOutputPath() {
+	public String getOutputPath() {
 		return outputPath;
 	}
 
-	public void setOutputPath(Path outputPath) {
+	public void setOutputPath(String outputPath) {
 		this.outputPath = outputPath;
 	}
 
