@@ -37,7 +37,6 @@ public class AdamDatabase extends AbstractDatabase {
 
 	@Override
 	protected DSLContext create0() {
-		// TODO: ok?
 		return DSL.using(getConnection());
 	}
 

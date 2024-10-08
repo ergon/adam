@@ -58,7 +58,7 @@ public class AdamTableDefinition extends AbstractTableDefinition {
 		case DECIMAL -> SQLDataType.DECIMAL;
 		case DECIMAL_INTEGER -> SQLDataType.DECIMAL_INTEGER;
 		case DOUBLE -> SQLDataType.DOUBLE;
-		case ENUM -> SQLDataType.VARCHAR; // TODO ???
+		case ENUM -> SQLDataType.VARCHAR;
 		case FLOAT -> SQLDataType.FLOAT;
 		case INTEGER -> SQLDataType.INTEGER;
 		case INTEGERUNSIGNED -> SQLDataType.INTEGERUNSIGNED;
@@ -94,8 +94,7 @@ public class AdamTableDefinition extends AbstractTableDefinition {
 	}
 
 	private boolean isIdentity(Field field) {
-		// Identity columns???
-		return false;
+		return field.isSequence();
 	}
 
 }
