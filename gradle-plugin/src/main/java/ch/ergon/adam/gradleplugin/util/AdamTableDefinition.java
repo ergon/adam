@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jooq.Name;
+import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.meta.AbstractTableDefinition;
 import org.jooq.meta.ColumnDefinition;
@@ -19,7 +20,7 @@ import ch.ergon.adam.core.db.schema.Table;
 
 public class AdamTableDefinition extends AbstractTableDefinition {
 
-	private Table table;
+	private final Table table;
 
 	public AdamTableDefinition(SchemaDefinition schema, Table table) {
 		super(schema, table.getName(), null);
@@ -37,11 +38,9 @@ public class AdamTableDefinition extends AbstractTableDefinition {
 	}
 
 	private DataTypeDefinition dataTypeDefinition(Field field) {
-		DataTypeDefinition dataType = new DefaultDataTypeDefinition(getDatabase(), getSchema(),
-				typeName(field.getDataType()), field.getLength(), field.getPrecision(), field.getScale(),
-				field.isNullable(), field.getDefaultValue(), (Name) null);
-
-		return dataType;
+        return new DefaultDataTypeDefinition(getDatabase(), getSchema(),
+                typeName(field.getDataType()), field.getLength(), field.getPrecision(), field.getScale(),
+                field.isNullable(), field.getDefaultValue(), getUserType(field));
 	}
 
 	private String typeName(DataType type) {
@@ -97,4 +96,10 @@ public class AdamTableDefinition extends AbstractTableDefinition {
 		return field.isSequence();
 	}
 
+    private Name getUserType(Field field) {
+        if (field.getDbEnum() != null) {
+            return DSL.name(field.getDbEnum().getName());
+        }
+        return null;
+    }
 }
