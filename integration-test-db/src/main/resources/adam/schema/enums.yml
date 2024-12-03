@@ -1,0 +1,5 @@
+- name: test_status
+  values:
+    - CANCELLED
+    - ORDERED
+    - SHIPPED

@@ -21,6 +21,10 @@ fields:
   - name: "col5"
     dataType: "VARCHAR"
     nullable: true
+  - name: "col6"
+    dataType: ENUM
+    enumName: test_status
+    nullable: true
 foreignKeys: []
 indexes:
   - name: "test_table_col1_key"
