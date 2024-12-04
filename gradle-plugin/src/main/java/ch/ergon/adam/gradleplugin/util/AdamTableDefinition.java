@@ -92,7 +92,7 @@ public class AdamTableDefinition extends AbstractTableDefinition {
 
     private Name getUserType(Field field) {
         if (field.getDbEnum() != null) {
-            return DSL.name(field.getDbEnum().getName());
+            return DSL.name(getSchema().getName(), field.getDbEnum().getName());
         }
         return null;
     }

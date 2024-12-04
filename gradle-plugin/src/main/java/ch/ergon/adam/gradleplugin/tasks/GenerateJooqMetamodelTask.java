@@ -12,6 +12,10 @@ public class GenerateJooqMetamodelTask extends DefaultTask {
 
     @Input
     @Optional
+    private String schemaName;
+
+    @Input
+    @Optional
     private String jooqConfig;
 
     @Input
@@ -26,9 +30,17 @@ public class GenerateJooqMetamodelTask extends DefaultTask {
     @TaskAction
     public void generateJooqMetamodel() throws Exception {
         Path output = getProject().getLayout().getProjectDirectory().dir(outputPath).getAsFile().toPath();
-        AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator(packageName, output, getSource(),
+        AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator(schemaName, packageName, output, getSource(),
             jooqConfig);
         generator.run();
+    }
+
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
     }
 
     public String getJooqConfig() {
