@@ -21,6 +21,7 @@ import static org.jooq.impl.SQLDataType.BIGINT;
 
 public class AdamDatabase extends AbstractDatabase {
     public static final String SOURCE_PROPERTY = "source";
+    public static final String SCHEMA_PROPERTY = "schema";
     private Schema schema;
     private SchemaDefinition schemaDefinition;
 
@@ -89,13 +90,13 @@ public class AdamDatabase extends AbstractDatabase {
     @Override
     protected List<CatalogDefinition> getCatalogs0() throws SQLException {
         ensureSchema();
-        return mutableList(new CatalogDefinition(this, "", ""));
+        return mutableList(schemaDefinition.getCatalog());
     }
 
     @Override
     protected List<SchemaDefinition> getSchemata0() throws SQLException {
         ensureSchema();
-        return mutableList(new SchemaDefinition(this, "", null));
+        return mutableList(schemaDefinition);
     }
 
     @Override
@@ -186,9 +187,10 @@ public class AdamDatabase extends AbstractDatabase {
 
     private void ensureSchema() {
         if (schema == null) {
-            String source = (String) getProperties().get(SOURCE_PROPERTY);
+            String source = getProperties().getProperty(SOURCE_PROPERTY);
+            String schemaName = getProperties().getProperty(SCHEMA_PROPERTY, "");
             schema = SourceAndSinkFactory.getInstance().getSource(source).getSchema();
-            schemaDefinition = new SchemaDefinition(this, "", null);
+            schemaDefinition = new SchemaDefinition(this, schemaName, null);
         }
     }
 }

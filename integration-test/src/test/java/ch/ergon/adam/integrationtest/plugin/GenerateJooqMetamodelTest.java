@@ -25,7 +25,7 @@ public class GenerateJooqMetamodelTest {
 
     @Test
     public void testMetamodelGeneration() {
-        AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator("test", tempFolder,
+        AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator("test-schema", "test", tempFolder,
             "yml-classpath://" + DEFAULT_SCHEMA_PACKAGE, null);
         try {
             generator.run();
@@ -40,6 +40,27 @@ public class GenerateJooqMetamodelTest {
 
             Path sequencesFilePath = tempFolder.resolve("test").resolve("Sequences.java");
             assertTrue(sequencesFilePath.toFile().exists(), "Metamodel for sequences must be generated");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSchemaGeneration() {
+        AdamJooqMetamodelGenerator defaultSchemaGenerator = new AdamJooqMetamodelGenerator(null, "test", tempFolder,
+            "yml-classpath://" + DEFAULT_SCHEMA_PACKAGE, null);
+
+        AdamJooqMetamodelGenerator generator = new AdamJooqMetamodelGenerator("test-schema", "test", tempFolder,
+            "yml-classpath://" + DEFAULT_SCHEMA_PACKAGE, null);
+        try {
+            defaultSchemaGenerator.run();
+            Path defaultSchemaPath = tempFolder.resolve("test").resolve("DefaultSchema.java");
+            assertTrue(defaultSchemaPath.toFile().exists(), "Metamodel for default schema must be generated");
+
+            generator.run();
+            Path testSchemaPath = tempFolder.resolve("test").resolve("TestSchema.java");
+            assertTrue(testSchemaPath.toFile().exists(), "Metamodel for test schema must be generated");
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

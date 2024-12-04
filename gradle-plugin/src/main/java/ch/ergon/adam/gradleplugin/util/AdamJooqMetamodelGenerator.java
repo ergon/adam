@@ -3,17 +3,20 @@ package ch.ergon.adam.gradleplugin.util;
 import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
 
+import com.google.common.base.Strings;
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.jaxb.*;
 
 public class AdamJooqMetamodelGenerator {
 
+    private final String schemaName;
     private final String packageName;
     private final Path outputPath;
     private final String source;
     private final String jooqConfig;
 
-    public AdamJooqMetamodelGenerator(String packageName, Path outputPath, String source, String jooqConfig) {
+    public AdamJooqMetamodelGenerator(String schemaName, String packageName, Path outputPath, String source, String jooqConfig) {
+        this.schemaName = schemaName;
         this.packageName = packageName;
         this.outputPath = outputPath;
         this.source = source;
@@ -38,6 +41,9 @@ public class AdamJooqMetamodelGenerator {
         Database database = new Database();
         database.setName(AdamDatabase.class.getName());
         database.getProperties().add(new Property().withKey(AdamDatabase.SOURCE_PROPERTY).withValue(source));
+        if (!Strings.isNullOrEmpty(schemaName)) {
+            database.getProperties().add(new Property().withKey(AdamDatabase.SCHEMA_PROPERTY).withValue(schemaName));
+        }
         generator.setDatabase(database);
 
         Strategy strategy = new Strategy();
