@@ -10,14 +10,14 @@ import org.jooq.meta.TableDefinition;
  */
 public class TableSuffixGeneratorStrategy extends DefaultGeneratorStrategy {
 
-	@Override
-	public String getJavaClassName(Definition definition, org.jooq.codegen.GeneratorStrategy.Mode mode) {
-		String defaultName = super.getJavaClassName(definition, mode);
-		if (mode == org.jooq.codegen.GeneratorStrategy.Mode.DEFAULT && definition instanceof TableDefinition) {
-			return defaultName + "Table";
-		} else {
-			return defaultName;
-		}
-	}
+    @Override
+    public String getJavaClassName(Definition definition, org.jooq.codegen.GeneratorStrategy.Mode mode) {
+        String defaultName = super.getJavaClassName(definition, mode);
+        if (mode == org.jooq.codegen.GeneratorStrategy.Mode.DEFAULT && definition instanceof TableDefinition) {
+            return defaultName + "Table";
+        } else {
+            return defaultName;
+        }
+    }
 
 }
