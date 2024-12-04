@@ -8,20 +8,7 @@ import java.util.function.Predicate;
 
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import org.jooq.meta.AbstractDatabase;
-import org.jooq.meta.ArrayDefinition;
-import org.jooq.meta.CatalogDefinition;
-import org.jooq.meta.DefaultEnumDefinition;
-import org.jooq.meta.DefaultRelations;
-import org.jooq.meta.DomainDefinition;
-import org.jooq.meta.EnumDefinition;
-import org.jooq.meta.PackageDefinition;
-import org.jooq.meta.RoutineDefinition;
-import org.jooq.meta.SchemaDefinition;
-import org.jooq.meta.SequenceDefinition;
-import org.jooq.meta.TableDefinition;
-import org.jooq.meta.UDTDefinition;
-import org.jooq.meta.XMLSchemaCollectionDefinition;
+import org.jooq.meta.*;
 
 import ch.ergon.adam.core.db.SourceAndSinkFactory;
 import ch.ergon.adam.core.db.schema.Field;
@@ -29,6 +16,8 @@ import ch.ergon.adam.core.db.schema.ForeignKey;
 import ch.ergon.adam.core.db.schema.Index;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
+
+import static org.jooq.impl.SQLDataType.BIGINT;
 
 public class AdamDatabase extends AbstractDatabase {
     public static final String SOURCE_PROPERTY = "source";
@@ -111,8 +100,27 @@ public class AdamDatabase extends AbstractDatabase {
 
     @Override
     protected List<SequenceDefinition> getSequences0() throws SQLException {
-        // not supported
-        return List.of();
+        return schema.getSequences().stream().map(s -> {
+            DataTypeDefinition sequenceType = new DefaultDataTypeDefinition(this,
+                schemaDefinition,
+                BIGINT.getTypeName(),
+                null,
+                null,
+                null,
+                false,
+                null);
+            DefaultSequenceDefinition definition = new DefaultSequenceDefinition(schemaDefinition,
+                s.getName(),
+                sequenceType,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                null);
+            return (SequenceDefinition) definition;
+        }).toList();
     }
 
     @Override

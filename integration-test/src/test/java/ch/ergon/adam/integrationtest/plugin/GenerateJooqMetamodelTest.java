@@ -37,6 +37,9 @@ public class GenerateJooqMetamodelTest {
 
             Path enumFilePath = tempFolder.resolve("test").resolve("enums").resolve("TestStatus.java");
             assertTrue(enumFilePath.toFile().exists(), "Metamodel for enums must be generated");
+
+            Path sequencesFilePath = tempFolder.resolve("test").resolve("Sequences.java");
+            assertTrue(sequencesFilePath.toFile().exists(), "Metamodel for sequences must be generated");
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
