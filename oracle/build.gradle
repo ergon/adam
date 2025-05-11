@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id "ch.ergon.gradle.goodies.versioning"
+    id("org.jreleaser") version "1.18.0"
 }
 
 ext.jooqProUser = hasProperty("jooqProUser") ? property("jooqProUser").toString() : rootProject.getLocalProperty("JOOQ_PRO_USER")

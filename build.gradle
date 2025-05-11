@@ -29,18 +29,6 @@ licenseReport {
 
 }
 
-nexusPublishing {
-    repositories {
-        sonatype {
-            stagingProfileId = project.findProperty('ossrhStagingProfileId')
-            username = project.findProperty('ossrhUsername')
-            password = project.findProperty('ossrhPassword')
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-        }
-    }
-}
-
 ext.getLocalProperty = { key, file = "local.properties" ->
     def properties = new Properties()
     def localProperties = new File(rootProject.rootDir, file)

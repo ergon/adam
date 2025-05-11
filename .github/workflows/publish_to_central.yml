@@ -21,10 +21,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Prepare GPG key
-        run: mkdir build && echo '${{secrets.SIGNING_KEY_FILE_BASE64}}' | base64 -d > build/adam_signing_key.gpg
+        run: mkdir ~/.jreleaser && echo '${{secrets.JRELEASER_CONFIG_YML_BASE64}}' | base64 -d > ~/.jreleaser/config.yml
 
       - name: Upload
-        run: ./gradlew -S -i publishReleasePublicationToSonatypeRepository -PjooqProUser=${{ secrets.JOOQ_PRO_USER }} -PjooqProPassword=${{ secrets.JOOQ_PRO_PASSWORD }} -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} -Psigning.password='${{ secrets.SIGNING_PASSWORD }}' -Psigning.secretKeyRingFile=../build/adam_signing_key.gpg -PossrhUsername='${{ secrets.OSSRH_USERNAME }}' -PossrhPassword='${{ secrets.OSSRH_PASSWORD }}' -PossrhStagingProfileId='${{ secrets.OSSRH_STAGING_PROFILE_ID }}'
+        run: ./gradlew -S -i publish jreleaserDeploy -PjooqProUser=${{ secrets.JOOQ_PRO_USER }} -PjooqProPassword=${{ secrets.JOOQ_PRO_PASSWORD }}
 
       - name: Cleanup
         if: always()
