@@ -1,5 +1,4 @@
 apply plugin: 'maven-publish'
-apply plugin: 'signing'
 
 task javadocJar(type: Jar) {
     archiveClassifier = 'javadoc'
@@ -49,6 +48,49 @@ publishing {
             }
         }
     }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+jreleaser {
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+        mode = 'FILE'
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                'release-deploy' {
+                    active = 'RELEASE'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+            nexus2 {
+                'snapshot-deploy' {
+                    active = 'SNAPSHOT'
+                    snapshotUrl = 'https://central.sonatype.com/repository/maven-snapshots'
+                    url = 'https://central.sonatype.com/repository/maven-snapshots'
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
+    release {
+        github {
+            skipRelease = true
+        }
+    }
 }
 
 javadoc {
@@ -61,6 +103,3 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-signing {
-    sign publishing.publications
-}
