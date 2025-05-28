@@ -21,6 +21,7 @@ import static ch.ergon.adam.core.prepost.db_schema_version.DbSchemaVersionSource
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.POSTGRES;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -38,7 +39,7 @@ public class RollbackOnInsertErrorTest extends AbstractDbTestBase {
         "insert into test_table values (1)";
 
     public RollbackOnInsertErrorTest() {
-        super(new PostgreSqlTestDbUrlProvider());
+        super(new PostgreSqlTestDbUrlProvider(), POSTGRES);
     }
 
     @Test

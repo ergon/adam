@@ -12,12 +12,13 @@ import java.sql.ResultSet;
 import static ch.ergon.adam.core.db.schema.DataType.INTEGER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.ORACLE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OracleCastFieldTypeTests extends CastFieldTypeTest {
     public OracleCastFieldTypeTests() {
-        super(new OracleTestDbUrlProvider());
+        super(new OracleTestDbUrlProvider(), ORACLE);
     }
 
     @Test
@@ -25,7 +26,7 @@ public class OracleCastFieldTypeTests extends CastFieldTypeTest {
 
         // Setup db
         getTargetDbConnection().createStatement().execute(getCreateTableStatement());
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        getTargetDbConnection().createStatement().execute(getInsertDataStatement());
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 

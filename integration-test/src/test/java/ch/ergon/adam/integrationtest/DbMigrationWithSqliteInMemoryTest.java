@@ -18,6 +18,7 @@ import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.SQLITE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DbMigrationWithSqliteInMemoryTest extends AbstractDbTestBase {
@@ -26,7 +27,7 @@ public class DbMigrationWithSqliteInMemoryTest extends AbstractDbTestBase {
     private static final String DB_VERSION_FIRST = "1";
 
     public DbMigrationWithSqliteInMemoryTest() {
-        super(new SqliteTestInMemoryDbUrlProvider());
+        super(new SqliteTestInMemoryDbUrlProvider(), SQLITE);
     }
 
     private Adam getDbMigration(String targetVersion) throws IOException {

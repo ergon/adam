@@ -1,11 +1,9 @@
 package ch.ergon.adam.jooq;
 
-import org.jooq.DSLContext;
-import org.jooq.Meta;
-import org.jooq.Named;
-import org.jooq.Schema;
+import org.jooq.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JooqUtils {
@@ -24,5 +22,12 @@ public class JooqUtils {
             throw new RuntimeException("Schema [" + schemaName + "] not found. Known schemas are [" + knownSchemas + "]");
         }
         return context.meta(schemas.get(0));
+    }
+
+    public static String ensureCorrectEscaping(String statement, SQLDialect dialect) {
+        if (Objects.requireNonNull(dialect) == SQLDialect.MARIADB) {
+            return statement.replace("\"", "`");
+        }
+        return statement;
     }
 }

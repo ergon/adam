@@ -103,6 +103,7 @@ public abstract class JooqSource implements SchemaSource {
 
         jooqTables = jooqTables.stream()
             .filter(table -> table.getOptions().type() == TABLE)
+            .filter(this::filterTable)
             .toList();
 
         Map<String, Table> tables = jooqTables.stream()
@@ -112,6 +113,10 @@ public abstract class JooqSource implements SchemaSource {
 
         mapForeignKeys(jooqTables, tables);
         return tables.values();
+    }
+
+    protected boolean filterTable(org.jooq.Table<?> table) {
+        return true;
     }
 
     private Collection<View> getViews() {
@@ -140,7 +145,6 @@ public abstract class JooqSource implements SchemaSource {
                     .filter(Objects::nonNull)
                     .forEach(v::addBaseRelation);
             });
-
     }
 
     private void mapForeignKeys(List<org.jooq.Table<?>> jooqTables, Map<String, Table> tables) {
@@ -148,7 +152,6 @@ public abstract class JooqSource implements SchemaSource {
             Table table = tables.get(jooqTable.getName());
             table.setForeignKeys(jooqTable.getReferences().stream().map(fk -> mapForeignKeyFromJooq(tables, fk)).collect(toList()));
         }
-
     }
 
     private ForeignKey mapForeignKeyFromJooq(Map<String, Table> tables, org.jooq.ForeignKey<?,?> jooqForeignKey) {

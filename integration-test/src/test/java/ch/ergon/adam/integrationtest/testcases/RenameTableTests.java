@@ -6,6 +6,7 @@ import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -30,8 +31,8 @@ public abstract class RenameTableTests extends AbstractDbTestBase {
     private static final String INSERT_DATA_SQL =
         "insert into test_table values (1)";
 
-    public RenameTableTests(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public RenameTableTests(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test

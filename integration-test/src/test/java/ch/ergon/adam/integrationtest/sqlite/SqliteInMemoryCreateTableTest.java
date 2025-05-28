@@ -1,7 +1,8 @@
 package ch.ergon.adam.integrationtest.sqlite;
 
-public class SqliteInMemoryCreateTableTest extends SqliteCreateTableTest {
+import static org.jooq.SQLDialect.SQLITE;
 
+public class SqliteInMemoryCreateTableTest extends SqliteCreateTableTest {
     public SqliteInMemoryCreateTableTest() {
         super(new SqliteTestInMemoryDbUrlProvider());
     }

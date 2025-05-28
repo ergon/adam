@@ -12,12 +12,13 @@ import java.io.IOException;
 import static ch.ergon.adam.core.db.schema.DataType.TIMESTAMPWITHTIMEZONE;
 import static ch.ergon.adam.core.helper.CollectorsHelper.createSchemaItemNameArray;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.jooq.SQLDialect.POSTGRES;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class PostgreTimestampSizeTest extends AbstractDbTestBase {
 
     public PostgreTimestampSizeTest() {
-        super(new PostgreSqlTestDbUrlProvider());
+        super(new PostgreSqlTestDbUrlProvider(), POSTGRES);
     }
 
     @Test

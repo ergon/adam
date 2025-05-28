@@ -13,7 +13,6 @@ public class SqliteTestInMemoryDbUrlProvider extends TestDbUrlProvider {
 
     @Override
     protected void initDbForTest() throws IOException {
-
     }
 
     @Override

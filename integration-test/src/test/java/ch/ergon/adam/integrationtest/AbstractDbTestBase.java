@@ -6,23 +6,26 @@ import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.yml.YmlSink;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractDbTestBase {
-
-
     private final TestDbUrlProvider testDbUrlProvider;
     private List<AutoCloseable> closeables = new ArrayList<>();
+    protected final SQLDialect dialect;
 
-    public AbstractDbTestBase(TestDbUrlProvider testDbUrlProvider) {
+    public AbstractDbTestBase(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
         this.testDbUrlProvider = testDbUrlProvider;
+        this.dialect = dialect;
     }
 
     @BeforeEach
@@ -50,6 +53,23 @@ public abstract class AbstractDbTestBase {
     protected Connection getTargetDbConnection() throws SQLException {
         return testDbUrlProvider.getTargetDbConnection();
     }
+
+    protected ResultSet executeQueryOnSourceDb(String statement) throws SQLException {
+        return getSourceDbConnection().createStatement().executeQuery(ensureCorrectEscaping(statement, dialect));
+    }
+
+    protected boolean executeOnSourceDb(String statement) throws SQLException {
+        return getSourceDbConnection().createStatement().execute(ensureCorrectEscaping(statement, dialect));
+    }
+
+    protected ResultSet executeQueryOnTargetDb(String statement) throws SQLException {
+        return getTargetDbConnection().createStatement().executeQuery(ensureCorrectEscaping(statement, dialect));
+    }
+
+    protected boolean executeOnTargetDb(String statement) throws SQLException {
+        return getTargetDbConnection().createStatement().execute(ensureCorrectEscaping(statement, dialect));
+    }
+
     protected SchemaSink getTargetDbSink() {
         SchemaSink sink = SourceAndSinkFactory.getInstance().getSink(getTargetDbUrl());
         closeables.add(sink);
@@ -116,5 +136,10 @@ public abstract class AbstractDbTestBase {
         return baos.toString();
     }
 
-
+    public static String ensureCorrectEscaping(String statement, SQLDialect dialect) {
+        if (Objects.requireNonNull(dialect) == SQLDialect.MARIADB) {
+            return statement.replace("\"", "`");
+        }
+        return statement;
+    }
 }

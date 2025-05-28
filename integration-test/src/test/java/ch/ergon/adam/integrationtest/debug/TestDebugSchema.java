@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import static ch.ergon.adam.core.Adam.DEFAULT_ADAM_PACKAGE;
 import static ch.ergon.adam.core.Adam.DEFAULT_MAIN_RESOURCE_PATH;
+import static org.jooq.SQLDialect.POSTGRES;
 
 public class TestDebugSchema extends AbstractDbTestBase {
 
     public TestDebugSchema() {
-        super(new PostgreSqlForDebugTestDbUrlProvider());
+        super(new PostgreSqlForDebugTestDbUrlProvider(), POSTGRES);
     }
 
     @Test

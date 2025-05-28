@@ -4,6 +4,7 @@ import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import static ch.ergon.adam.core.db.schema.DataType.DECIMAL_INTEGER;
@@ -20,8 +21,8 @@ public abstract class ChangeArrayFieldTypeTest extends AbstractDbTestBase {
     private static final String INSERT_SQL =
         "insert into test_table values ('{\"123\"}')";
 
-    public ChangeArrayFieldTypeTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public ChangeArrayFieldTypeTest(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test

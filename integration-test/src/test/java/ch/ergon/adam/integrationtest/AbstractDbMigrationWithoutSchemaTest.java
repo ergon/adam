@@ -1,6 +1,7 @@
 package ch.ergon.adam.integrationtest;
 
 import ch.ergon.adam.core.Adam;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractDbMigrationWithoutSchemaTest extends AbstractDbTestBase {
 
-    public AbstractDbMigrationWithoutSchemaTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public AbstractDbMigrationWithoutSchemaTest(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
-
 
     private static final String DB_VERSION_UNKNOWN = "6";
     private static final String DB_VERSION_5 = "5";
@@ -33,10 +33,14 @@ public abstract class AbstractDbMigrationWithoutSchemaTest extends AbstractDbTes
     private static final String DB_VERSION_1 = "1";
 
     private Adam getDbMigration(String targetVersion) throws IOException {
-        Path exportPath = Paths.get("../integration-test-db/" + DEFAULT_MAIN_RESOURCE_PATH + DEFAULT_ADAM_PACKAGE);
+        Path exportPath = Paths.get("../integration-test-db/" + DEFAULT_MAIN_RESOURCE_PATH + DEFAULT_ADAM_PACKAGE + getExportFolder());
         Path targetVersionFile = exportPath.resolve(TARGET_VERSION_FILE_NAME);
         Files.write(targetVersionFile, targetVersion.getBytes(UTF_8));
         return Adam.usingExportDirectory(getTargetDbUrl(), "yml", exportPath.resolve("not_existing"), exportPath);
+    }
+
+    protected String getExportFolder() {
+        return "";
     }
 
     private void doMigrate(String targetVersion) throws IOException {
@@ -44,20 +48,19 @@ public abstract class AbstractDbMigrationWithoutSchemaTest extends AbstractDbTes
     }
 
     private String getCurrentSchemaVersion() throws SQLException {
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
+        ResultSet result = executeQueryOnTargetDb(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
         assertTrue(result.next());
         return result.getString(1);
     }
 
     private int countMigrations() throws SQLException {
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT count(*) FROM \"%s\"", SCHEMA_VERSION_TABLE_NAME));
+        ResultSet result = executeQueryOnTargetDb(format("SELECT count(*) FROM \"%s\"", SCHEMA_VERSION_TABLE_NAME));
         assertTrue(result.next());
         return result.getInt(1);
     }
 
-
     private void setCurrentSchemaVersion(String version) throws SQLException {
-        getTargetDbConnection().createStatement().execute(format("UPDATE \"%s\" SET \"target_version\" = '%s'", SCHEMA_VERSION_TABLE_NAME, version));
+        executeOnTargetDb(format("UPDATE \"%s\" SET \"target_version\" = '%s'", SCHEMA_VERSION_TABLE_NAME, version));
     }
 
     @Test

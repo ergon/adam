@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.POSTGRES;
 
 public class PostgreSqlIntervalFieldTest extends AbstractDbTestBase {
-
     public PostgreSqlIntervalFieldTest() {
-        super(new PostgreSqlTestDbUrlProvider());
+        super(new PostgreSqlTestDbUrlProvider(), POSTGRES);
     }
 
     private static final String YML = "---\n" +

@@ -8,12 +8,13 @@ import org.junit.jupiter.api.Test;
 import static ch.ergon.adam.core.db.schema.DataType.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.POSTGRES;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PostgreSqlCreateTableTest extends AbstractDbTestBase {
 
     public PostgreSqlCreateTableTest() {
-        super(new PostgreSqlTestDbUrlProvider());
+        super(new PostgreSqlTestDbUrlProvider(), POSTGRES);
     }
 
     private static final String YML = "---\n" +

@@ -6,6 +6,7 @@ import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -27,16 +28,16 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
     private static final String INSERT_DATA_SQL =
         "insert into \"test_table\" values (1)";
 
-    public AddFieldTests(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public AddFieldTests(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test
     public void testAddFieldAtEndOfTable() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -45,6 +46,7 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
         List<Field> fields = new ArrayList<>(table.getFields());
         Field newField = new Field("new_field");
         newField.setDataType(VARCHAR);
+        newField.setLength(128);
         newField.setDefaultValue("\'testDefault\'");
         fields.add(newField);
         table.setFields(fields);
@@ -65,18 +67,17 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
         assertThat(field.getDefaultValue(), is("'testDefault'"));
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select count(*) from \"test_table\"");
+        ResultSet result = executeQueryOnTargetDb("select count(*) from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(1));
-
     }
 
     @Test
     public void testAddFieldAtBeginOfTable() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -108,7 +109,7 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
         assertThat(field.getDefaultValue(), is("'abcd'"));
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select count(*) from \"test_table\"");
+        ResultSet result = executeQueryOnTargetDb("select count(*) from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(1));
     }
@@ -117,8 +118,8 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
     public void testAddFieldAtEndOfTableWithSimpleMigrationNotNullWithDefault() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -134,18 +135,17 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
         migrateTargetWithSchema(schema);
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"new_field\") from \"test_table\"");
+        ResultSet result = executeQueryOnTargetDb("select sum(\"new_field\") from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(1));
-
     }
 
     @Test
     public void testAddFieldAtEndOfTableWithComplexMigrationNotNullWithoutDefault() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -160,9 +160,8 @@ public abstract class AddFieldTests extends AbstractDbTestBase {
         migrateTargetWithSchema(schema);
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"new_field\") from \"test_table\"");
+        ResultSet result = executeQueryOnTargetDb("select sum(\"new_field\") from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(2));
-
     }
 }

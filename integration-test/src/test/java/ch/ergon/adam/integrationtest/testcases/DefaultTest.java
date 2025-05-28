@@ -4,6 +4,7 @@ import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -30,8 +31,8 @@ public abstract class DefaultTest extends AbstractDbTestBase {
             ")";
     }
 
-    public DefaultTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public DefaultTest(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test

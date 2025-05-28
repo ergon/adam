@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Disabled;
 
 import java.io.IOException;
 
+import static org.jooq.SQLDialect.SQLITE;
+
 public class SqliteIndexTests extends IndexTests {
     public SqliteIndexTests() throws IOException {
-        super(new SqliteTestFileDbUrlProvider());
+        super(new SqliteTestFileDbUrlProvider(), SQLITE);
     }
 
     @Override

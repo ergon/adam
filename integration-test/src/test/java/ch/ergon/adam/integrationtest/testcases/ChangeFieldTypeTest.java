@@ -6,6 +6,7 @@ import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public abstract class ChangeFieldTypeTest extends AbstractDbTestBase {
             ")";
     }
 
-    public ChangeFieldTypeTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public ChangeFieldTypeTest(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test

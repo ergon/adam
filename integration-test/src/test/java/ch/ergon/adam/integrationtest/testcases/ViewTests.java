@@ -4,6 +4,7 @@ import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -25,17 +26,17 @@ public abstract class ViewTests extends AbstractDbTestBase {
         "create view \"view2\" as " +
             "select * from \"test_table\"";
 
-    public ViewTests(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public ViewTests(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test
     public void testCreateViews() throws Exception {
 
         // Setup db
-        getSourceDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getSourceDbConnection().createStatement().execute(CREATE_VIEW1_SQL);
-        getSourceDbConnection().createStatement().execute(CREATE_VIEW2_SQL);
+        executeOnSourceDb(CREATE_TABLE_SQL);
+        executeOnSourceDb(CREATE_VIEW1_SQL);
+        executeOnSourceDb(CREATE_VIEW2_SQL);
         sourceToTarget();
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
@@ -48,9 +49,9 @@ public abstract class ViewTests extends AbstractDbTestBase {
     public void testRecreateViewsAfterTableChange() throws Exception {
 
         // Setup db
-        getSourceDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getSourceDbConnection().createStatement().execute(CREATE_VIEW1_SQL);
-        getSourceDbConnection().createStatement().execute(CREATE_VIEW2_SQL);
+        executeOnSourceDb(CREATE_TABLE_SQL);
+        executeOnSourceDb(CREATE_VIEW1_SQL);
+        executeOnSourceDb(CREATE_VIEW2_SQL);
         sourceToTarget();
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
