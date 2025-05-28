@@ -6,6 +6,7 @@ include 'postgresql'
 include 'oracle'
 include 'integration-test'
 include 'sqlite'
+include 'mariadb'
 include 'gradle-plugin'
 include 'integration-test-db'
 
@@ -14,4 +15,3 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-

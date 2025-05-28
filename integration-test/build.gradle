@@ -28,6 +28,7 @@ dependencies {
     testImplementation project(':yml')
     testImplementation project(':postgresql')
     testImplementation project(':oracle')
+    testImplementation project(':mariadb')
     testImplementation project(':sqlite')
     testImplementation project(':integration-test-db')
     testImplementation project(':gradle-plugin')
@@ -45,6 +46,8 @@ dependencies {
     testImplementation("org.postgresql:postgresql:42.7.4")
     testImplementation("org.testcontainers:oracle-free:1.20.2")
     testImplementation('com.oracle.database.jdbc:ojdbc11:23.5.0.24.07')
+    testImplementation('org.testcontainers:mariadb:1.21.0')
+    testImplementation('org.mariadb.jdbc:mariadb-java-client:3.3.1')
     testImplementation('org.jooq.pro:jooq:3.19.11')
 }
 
