@@ -85,7 +85,11 @@ public class MariaDbTransactionWrapper implements SchemaSource, SchemaSink, SqlE
 
     @Override
     public void commitChanges() {
-        sqlSink.commitChanges();
+        try {
+            dbConnection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
