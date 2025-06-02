@@ -94,7 +94,7 @@ public class MariaDbSink extends JooqSink {
     protected org.jooq.DataType<?> mapFieldToJooqType(Field field) {
         switch (field.getDataType()) {
             case TIMESTAMPWITHTIMEZONE:
-                return SQLDataType.TIMESTAMP;
+                return SQLDataType.TIMESTAMP(6);
             case ENUM:
                 return new DefaultDataType<>(null, VARCHAR, field.getDbEnum().getName(), field.getDbEnum().getName());
             default:

@@ -248,11 +248,11 @@ public class Adam {
     }
 
     private void createSchemaVersionEntry(SqlExecutor sqlExecutor, String fromVersion, String toVersion) {
-        sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (CURRENT_TIMESTAMP, ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
+        sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (CURRENT_TIMESTAMP(6), ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
     }
 
     private void completeSchemaVersionEntry(SqlExecutor sqlExecutor) {
-        sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = CURRENT_TIMESTAMP WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = CURRENT_TIMESTAMP(6) WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
     }
 
     public void setAllowUnknownDBVersion(boolean allowUnknownDBVersion) {
