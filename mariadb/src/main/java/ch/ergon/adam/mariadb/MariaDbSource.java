@@ -15,9 +15,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
@@ -43,6 +45,7 @@ public class MariaDbSource extends JooqSource {
         Schema schema = super.getSchema();
         schema.setSequences(getSequences());
         schema.setEnums(enums.values());
+        setCustomTypes(schema);
         fetchConstraints(schema);
         return schema;
     }
@@ -71,30 +74,20 @@ public class MariaDbSource extends JooqSource {
                     mapping(r -> r.getValue("base").toString(), toList())));
     }
 
-    private Collection<DbEnum> getEnums() {
-        Result<Record> result = getContext().resultQuery(
-            "SELECT DISTINCT" +
-                "    CONCAT(TABLE_NAME, '_', COLUMN_NAME) AS enum_name," +
-                "    GROUP_CONCAT(" +
-                "        REPLACE(REPLACE(SUBSTRING(COLUMN_TYPE, 6, LENGTH(COLUMN_TYPE) - 6), '''', ''), ' ', '')" +
-                "        ORDER BY ORDINAL_POSITION" +
-                "    ) AS enum_values " +
-                "FROM INFORMATION_SCHEMA.COLUMNS " +
-                "WHERE TABLE_SCHEMA = ? " +
-                "AND COLUMN_TYPE LIKE 'enum%' " +
-                "GROUP BY TABLE_NAME, COLUMN_NAME",
-            schemaName).fetch();
-
-        return result.stream()
-            .map(this::mapEnumFromMariaDB)
-            .sorted(comparing(DbEnum::getName))
-            .collect(toList());
+    @Override
+    protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField, org.jooq.Table<?> jooqTable) {
+        String enumName = jooqTable.getName() + "_" +  jooqField.getName();
+        if (enums.containsKey(enumName)) {
+            return ENUM;
+        }
+        return super.mapDataTypeFromJooq(jooqField, jooqTable);
     }
 
-    private DbEnum mapEnumFromMariaDB(Record record) {
-        DbEnum dbEnum = new DbEnum(record.getValue("enum_name").toString());
-        dbEnum.setValues(record.getValue("enum_values").toString().split(","));
-        return dbEnum;
+    @Override
+    protected String getViewDefinition(String name) {
+        Result<Record> result = getContext().resultQuery("select view_definition from INFORMATION_SCHEMA.views where table_schema = ? and table_name = ?", schemaName, name).fetch();
+        String definition = result.getFirst().getValue("view_definition").toString();
+        return definition.replaceAll("`" + schemaName + "`\\.", "");
     }
 
     private Collection<Sequence> getSequences() {
@@ -195,10 +188,49 @@ public class MariaDbSource extends JooqSource {
         }
     }
 
-    @Override
-    protected String getViewDefinition(String name) {
-        Result<Record> result = getContext().resultQuery("select view_definition from INFORMATION_SCHEMA.views where table_schema = ? and table_name = ?", schemaName, name).fetch();
-        String definition = result.getFirst().getValue("view_definition").toString();
-        return definition.replaceAll("`" + schemaName + "`\\.", "");
+    private Collection<DbEnum> getEnums() {
+        Result<Record> result = getEnumSchemaInformation();
+
+        return result.stream()
+            .map(this::mapEnumFromMariaDB)
+            .sorted(comparing(DbEnum::getName))
+            .collect(toList());
+    }
+
+    private Result<Record> getEnumSchemaInformation() {
+        return getContext().resultQuery(
+            "SELECT DISTINCT" +
+                "    TABLE_NAME AS table_name," +
+                "    COLUMN_NAME AS column_name," +
+                "    CONCAT(TABLE_NAME, '_', COLUMN_NAME) AS enum_name," +
+                "    GROUP_CONCAT(" +
+                "        REPLACE(REPLACE(SUBSTRING(COLUMN_TYPE, 6, LENGTH(COLUMN_TYPE) - 6), '''', ''), ' ', '')" +
+                "        ORDER BY ORDINAL_POSITION" +
+                "    ) AS enum_values " +
+                "FROM INFORMATION_SCHEMA.COLUMNS " +
+                "WHERE TABLE_SCHEMA = ? " +
+                "AND COLUMN_TYPE LIKE 'enum%' " +
+                "GROUP BY TABLE_NAME, COLUMN_NAME",
+            schemaName).fetch();
+    }
+
+    private DbEnum mapEnumFromMariaDB(Record record) {
+        DbEnum dbEnum = new DbEnum(record.getValue("enum_name").toString());
+        dbEnum.setValues(record.getValue("enum_values").toString().split(","));
+        return dbEnum;
+    }
+
+    private void setCustomTypes(Schema schema) {
+        getEnumSchemaInformation().forEach(record -> {
+            Relation relation = schema.getRelation(record.getValue("table_name").toString());
+            if (relation == null) {
+                return;
+            }
+            Field field = relation.getField(record.getValue("column_name").toString());
+            String enumName = record.getValue("enum_name").toString();
+            DbEnum dbEnum = requireNonNull(schema.getEnum(enumName), "Unknown enum [" + enumName + "] for field [" + field.getName() + "] on table [" + relation.getName() + "].");
+            field.setDataType(ENUM);
+            field.setDbEnum(dbEnum);
+        });
     }
 }

@@ -18,8 +18,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
 import static java.util.Arrays.stream;
@@ -176,7 +174,7 @@ public abstract class JooqSource implements SchemaSource {
 
     private Table mapTableFromJooq(org.jooq.Table<?> jooqTable) {
         Table table = new Table(jooqTable.getName());
-        table.setFields(stream(jooqTable.fields()).map(this::mapFieldFromJooq).collect(toList()));
+        table.setFields(stream(jooqTable.fields()).map(jooqField -> mapFieldFromJooq(jooqField, jooqTable)).collect(toList()));
         List<Index> indexes = jooqTable.getIndexes().stream().map(jooqIndex -> mapIndexFromJooq(table, jooqIndex)).collect(toList());
         if (jooqTable.getPrimaryKey() != null) {
             indexes.add(mapPrimaryKeyFromJooq(table, jooqTable.getPrimaryKey()));
@@ -188,7 +186,7 @@ public abstract class JooqSource implements SchemaSource {
 
     private View mapViewFromJooq(org.jooq.Table<?> jooqTable) {
         View view = new View(jooqTable.getName());
-        view.setFields(stream(jooqTable.fields()).map(this::mapFieldFromJooq).collect(toList()));
+        view.setFields(stream(jooqTable.fields()).map(jooqField -> mapFieldFromJooq(jooqField, jooqTable)).collect(toList()));
         view.setViewDefinition(getViewDefinition(view.getName()));
         return view;
     }
@@ -231,10 +229,10 @@ public abstract class JooqSource implements SchemaSource {
         return index;
     }
 
-    protected Field mapFieldFromJooq(org.jooq.Field<?> jooqField) {
+    protected Field mapFieldFromJooq(org.jooq.Field<?> jooqField, org.jooq.Table<?> jooqTable) {
         Field field = new Field(jooqField.getName());
         field.setArray(jooqField.getDataType().isArray());
-        field.setDataType(mapDataTypeFromJooq(jooqField));
+        field.setDataType(mapDataTypeFromJooq(jooqField, jooqTable));
         org.jooq.DataType<?> jooqType = jooqField.getDataType(getContext().configuration());
         field.setNullable(jooqType.nullable());
 
@@ -266,7 +264,7 @@ public abstract class JooqSource implements SchemaSource {
         return jooqField.getDataType().identity();
     }
 
-    protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField) {
+    protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField, org.jooq.Table<?> jooqTable) {
         org.jooq.DataType<?> sqlDataType = jooqField.getDataType().getSQLDataType();
         if (sqlDataType.isInterval()) {
             Class<?> type = sqlDataType.getType();

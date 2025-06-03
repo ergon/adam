@@ -30,7 +30,7 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
     Set<View> viewsToDrop = new LinkedHashSet<>();
     Set<DbEnum> enumsToCreate = new LinkedHashSet<>();
     Set<DbEnum> enumsToUpdate = new LinkedHashSet<>();
-    Set<Field> tableFieldsToChangeTypeForEnumMigration = new LinkedHashSet<>();
+    Set<Pair<Field, Field>> tableFieldsToChangeTypeForEnumMigration = new LinkedHashSet<>();
     Set<DbEnum> enumsToDrop = new LinkedHashSet<>();
     Set<Constraint> constraintsToDrop = new LinkedHashSet<>();
     Set<Constraint> constraintsToCreate = new LinkedHashSet<>();
@@ -215,9 +215,15 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
     public void enumUpdated(DbEnum oldEnum, DbEnum newEnum) {
         enumsToUpdate.add(oldEnum);
         enumsToCreate.add(newEnum);
-        List<Field> referencingTableFields = oldEnum.getReferencingFields().stream()
+        List<Pair<Field, Field>> referencingTableFields = oldEnum.getReferencingFields().stream()
             .filter(f -> f.getContainer() instanceof Table)
-            .collect(toList());
+            .map(f -> {
+                Field newField = newEnum.getReferencingFields().stream()
+                    .filter(nF -> nF.getTable().getName().equals(f.getTable().getName()) && nF.getName().equals(f.getName()))
+                    .findFirst()
+                    .orElse(f);
+                return new Pair<>(f, newField);
+            }).toList();
         tableFieldsToChangeTypeForEnumMigration.addAll(referencingTableFields);
     }
 
@@ -279,18 +285,18 @@ public class DefaultMigrationStrategy implements MigrationStrategy {
 
         sequencesToDrop.forEach(sink::dropSequence);
 
-        tableFieldsToChangeTypeForEnumMigration.forEach(field -> {
-            sink.dropDefault(field);
-            sink.changeFieldType(field, field, DataType.CLOB);
+        tableFieldsToChangeTypeForEnumMigration.forEach(p -> {
+            sink.dropDefault(p.getFirst());
+            sink.changeFieldType(p.getFirst(), p.getSecond(), DataType.CLOB);
         });
 
         enumsToUpdate.forEach(sink::dropEnum);
 
         enumsToCreate.forEach(sink::createEnum);
 
-        tableFieldsToChangeTypeForEnumMigration.forEach(field -> {
-            sink.changeFieldType(field, field, field.getDataType());
-            sink.setDefault(field);
+        tableFieldsToChangeTypeForEnumMigration.forEach(p -> {
+            sink.changeFieldType(p.getFirst(), p.getSecond(), p.getSecond().getDataType());
+            sink.setDefault(p.getSecond());
         });
 
         tablesToRename.forEach(pair -> sink.renameTable(pair.getFirst(), pair.getSecond().getName()));

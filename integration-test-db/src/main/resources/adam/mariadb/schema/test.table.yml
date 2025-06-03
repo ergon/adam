@@ -28,7 +28,6 @@ fields:
   - name: "col7"
     dataType: ENUM
     enumName: test_status
-    array: true
     nullable: true
 foreignKeys: []
 indexes:

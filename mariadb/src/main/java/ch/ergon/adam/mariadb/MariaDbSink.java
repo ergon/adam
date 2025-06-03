@@ -3,11 +3,15 @@ package ch.ergon.adam.mariadb;
 import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.jooq.JooqSink;
 import org.jooq.CreateTableElementListStep;
+import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultDataType;
 import org.jooq.impl.SQLDataType;
 
 import java.sql.Connection;
 
+import static ch.ergon.adam.core.db.schema.DataType.ENUM;
+import static ch.ergon.adam.core.helper.CollectorsHelper.createQuotedList;
+import static java.lang.String.format;
 import static org.jooq.SQLDialect.MARIADB;
 import static org.jooq.impl.SQLDataType.VARCHAR;
 
@@ -40,6 +44,10 @@ public class MariaDbSink extends JooqSink {
         }
 
         addRows.execute();
+
+        table.getFields()
+                .stream().filter(Field::isEnum)
+                .forEach(this::modifyEnumColumnType);
     }
 
     @Override
@@ -81,6 +89,11 @@ public class MariaDbSink extends JooqSink {
     }
 
     @Override
+    public void dropDefault(Field field) {
+        context.execute(format("ALTER TABLE `%s` ALTER `%s` DROP DEFAULT", field.getTable().getName(), field.getName()));
+    }
+
+    @Override
     public void dropEnum(DbEnum dbEnum) {
         // In MariaDB ENUM types are defined as part of the column definition, not as separate types
     }
@@ -91,14 +104,35 @@ public class MariaDbSink extends JooqSink {
     }
 
     @Override
+    public void changeFieldType(Field oldField, Field newField, ch.ergon.adam.core.db.schema.DataType targetDataType) {
+        if (targetDataType == ENUM) {
+            modifyEnumColumnType(newField);
+        } else {
+            super.changeFieldType(oldField, newField, targetDataType);
+        }
+    }
+
+    @Override
     protected org.jooq.DataType<?> mapFieldToJooqType(Field field) {
         switch (field.getDataType()) {
             case TIMESTAMPWITHTIMEZONE:
                 return SQLDataType.TIMESTAMP(6);
             case ENUM:
-                return new DefaultDataType<>(null, VARCHAR, field.getDbEnum().getName(), field.getDbEnum().getName());
+                return SQLDataType.CLOB;
             default:
                 return super.mapFieldToJooqType(field);
         }
+    }
+
+    private void modifyEnumColumnType(Field enumField) {
+        String newTypeName = format("enum(%s)", createQuotedList(enumField.getDbEnum().getValues(), "'"));
+        String statement = format("ALTER TABLE `%s` MODIFY `%s` %s", enumField.getTable().getName(), enumField.getName(), newTypeName);
+        if (!enumField.isNullable()) {
+            statement += " NOT NULL";
+        }
+        if (enumField.getDefaultValue() != null) {
+            statement += " DEFAULT " + enumField.getDefaultValue();
+        }
+        context.execute(statement);
     }
 }

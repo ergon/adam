@@ -105,6 +105,10 @@ public class Field extends SchemaItem {
         isArray = array;
     }
 
+    public boolean isEnum() {
+        return dataType == DataType.ENUM;
+    }
+
     public boolean isSequence() {
         return sequence;
     }
