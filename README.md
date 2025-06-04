@@ -22,6 +22,7 @@ Supported:
 - PostgreSQL
 - SQLite
 - Oracle
+- MariaDB
 
 ### Schema sink
 
@@ -33,6 +34,7 @@ Supported:
 - PostgreSQL
 - SQLite
 - Oracle
+- MariaDB
 
 ### Automated schema migrator
 
