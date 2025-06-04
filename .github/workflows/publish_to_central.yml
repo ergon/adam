@@ -28,4 +28,4 @@ jobs:
 
       - name: Cleanup
         if: always()
-        run: rm build/adam_signing_key.gpg
+        run: rm ~/.jreleaser/config.yml
