@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Disabled;
 
 import java.io.IOException;
 
+import static org.jooq.SQLDialect.SQLITE;
+
 public class SqliteDefaultTest extends DefaultTest {
     public SqliteDefaultTest() throws IOException {
-        super(new SqliteTestFileDbUrlProvider());
+        super(new SqliteTestFileDbUrlProvider(), SQLITE);
     }
 
     @Disabled

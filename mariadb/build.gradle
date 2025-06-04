@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+    id "ch.ergon.gradle.goodies.versioning"
+    id("org.jreleaser") version "1.18.0"
+}
+
+group 'ch.ergon.adam'
+description 'The MariaDB plugin for ADAM'
+
+sourceCompatibility = 21
+
+dependencies {
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.1'
+    implementation project(':jooq')
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.1.2'
+    implementation group: 'org.jooq', name: 'jooq', version: '3.19.11'
+}
+
+apply from: "${rootProject.projectDir}/publish.gradle"
+apply from: "${rootProject.projectDir}/common.gradle"

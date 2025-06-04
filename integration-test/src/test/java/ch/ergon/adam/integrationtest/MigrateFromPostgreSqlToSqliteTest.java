@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.jooq.SQLDialect.POSTGRES;
+
 public class MigrateFromPostgreSqlToSqliteTest extends AbstractDbTestBase {
 
     private static final String CREATE_TABLE_SQL =
@@ -15,7 +17,7 @@ public class MigrateFromPostgreSqlToSqliteTest extends AbstractDbTestBase {
         "insert into test_table values (1)";
 
     public MigrateFromPostgreSqlToSqliteTest() throws IOException {
-        super(new PostgreSqlToSqliteTestDbUrlProvider());
+        super(new PostgreSqlToSqliteTestDbUrlProvider(), POSTGRES);
     }
 
     @Test

@@ -10,6 +10,8 @@ import org.jooq.impl.DSL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static ch.ergon.adam.jooq.JooqUtils.ensureCorrectEscaping;
+
 public class JooqSqlExecutor implements SqlExecutor {
 
     protected final DSLContext context;
@@ -49,7 +51,7 @@ public class JooqSqlExecutor implements SqlExecutor {
 
     @Override
     public Object queryResult(String query, Object... params) {
-        Result<Record> result = context.resultQuery(query, params).fetch();
+        Result<Record> result = context.resultQuery(ensureCorrectEscaping(query, context.dialect()), params).fetch();
         if (result.isNotEmpty()) {
             return result.getValue(0, 0);
         }

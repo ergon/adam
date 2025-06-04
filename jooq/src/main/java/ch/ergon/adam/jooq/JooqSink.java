@@ -1,6 +1,7 @@
 package ch.ergon.adam.jooq;
 
 import ch.ergon.adam.core.db.interfaces.SchemaSink;
+import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.core.db.schema.Constraint;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.ForeignKey;
@@ -8,9 +9,8 @@ import ch.ergon.adam.core.db.schema.Index;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Sequence;
 import ch.ergon.adam.core.db.schema.Table;
-import ch.ergon.adam.core.db.schema.*;
-import org.jooq.DataType;
 import org.jooq.*;
+import org.jooq.DataType;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultDataType;
 import org.jooq.impl.SQLDataType;
@@ -22,6 +22,7 @@ import java.util.Map;
 import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.createSchemaItemNameArray;
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
+import static ch.ergon.adam.jooq.JooqUtils.ensureCorrectEscaping;
 import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
@@ -103,7 +104,6 @@ public class JooqSink implements SchemaSink {
     @Override
     public void dropIndex(Index index) {
         context.dropIndex(index.getName()).on(getTableName(index.getTable())).execute();
-
     }
 
     @Override
@@ -132,7 +132,7 @@ public class JooqSink implements SchemaSink {
     public void addField(Field field) {
         context.alterTable(getTableName(field.getTable())).addColumn(field.getName(), mapType(field)).execute();
         if (field.getSqlForNew() != null) {
-            context.execute(String.format("UPDATE \"%s\" SET \"%s\" = %s", field.getTable().getName(), field.getName(), field.getSqlForNew()));
+            context.execute(ensureCorrectEscaping(format("UPDATE \"%s\" SET \"%s\" = %s", field.getTable().getName(), field.getName(), field.getSqlForNew()), context.dialect()));
         }
     }
 
@@ -181,7 +181,7 @@ public class JooqSink implements SchemaSink {
 
     @Override
     public void createView(View view) {
-        context.execute(format("CREATE VIEW \"%s\" AS %s", view.getName(), view.getViewDefinition()));
+        context.execute(ensureCorrectEscaping(format("CREATE VIEW \"%s\" AS %s", view.getName(), view.getViewDefinition()), context.dialect()));
     }
 
     @Override
@@ -292,12 +292,12 @@ public class JooqSink implements SchemaSink {
             fieldsWithMigration.values().stream().map(field -> field.getSqlForNew())
         ).collect(joining(","));
 
-        context.execute(format("INSERT INTO \"%s\" (%s) select %s from \"%s\" ",
+        context.execute(ensureCorrectEscaping(format("INSERT INTO \"%s\" (%s) select %s from \"%s\" ",
             targetTable.getName(),
             fieldNames,
             values,
             sourceTableName
-        ));
+        ), context.dialect()));
     }
 
     protected String castIfNeeded(Field sourceField, Field targetField, DSLContext renderContext) {

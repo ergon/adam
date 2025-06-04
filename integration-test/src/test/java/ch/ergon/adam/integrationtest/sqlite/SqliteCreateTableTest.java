@@ -10,6 +10,7 @@ import static ch.ergon.adam.core.db.schema.DataType.INTEGER;
 import static ch.ergon.adam.core.db.schema.DataType.NUMERIC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.SQLITE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class SqliteCreateTableTest extends AbstractDbTestBase {
@@ -24,7 +25,7 @@ public abstract class SqliteCreateTableTest extends AbstractDbTestBase {
             ")";
 
     public SqliteCreateTableTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+        super(testDbUrlProvider, SQLITE);
     }
 
     private void verifySchema(Schema schema) {

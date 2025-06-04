@@ -3,14 +3,16 @@ package ch.ergon.adam.integrationtest.postgresql;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
+import static org.jooq.SQLDialect.POSTGRES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostgreSqlArrayFieldTest extends AbstractDbTestBase {
 
     public PostgreSqlArrayFieldTest() {
-        super(new PostgreSqlTestDbUrlProvider());
+        super(new PostgreSqlTestDbUrlProvider(), POSTGRES);
     }
 
     private static final String YML = "---\n" +

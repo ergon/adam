@@ -4,6 +4,7 @@ import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -23,15 +24,15 @@ public abstract class IndexTests extends AbstractDbTestBase {
         return "create unique index partial_idx on test_table(id) where col1 = 'test'";
     }
 
-    public IndexTests(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public IndexTests(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test
     public void testCreateIndex() throws Exception {
 
         // Setup db
-        getSourceDbConnection().createStatement().execute(getCreateTableSql());
+        executeOnSourceDb(getCreateTableSql());
         sourceToTarget();
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
@@ -44,7 +45,7 @@ public abstract class IndexTests extends AbstractDbTestBase {
     public void testRecreateIndexAfterTableChange() throws Exception {
 
         // Setup db
-        getSourceDbConnection().createStatement().execute(getCreateTableSql());
+        executeOnSourceDb(getCreateTableSql());
 
         sourceToTarget();
         DummySink dummySink = targetToDummy();
@@ -65,8 +66,8 @@ public abstract class IndexTests extends AbstractDbTestBase {
     public void testRecreatePartialIndexAfterTableChange() throws Exception {
 
         // Setup db
-        getSourceDbConnection().createStatement().execute(getCreateTableSql());
-        getSourceDbConnection().createStatement().execute(getCreatePartialIndexSql());
+        executeOnSourceDb(getCreateTableSql());
+        executeOnSourceDb(getCreatePartialIndexSql());
 
         sourceToTarget();
         DummySink dummySink = targetToDummy();

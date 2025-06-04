@@ -7,14 +7,15 @@ import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.AssertAnyChangeStrategy;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 
 public abstract class SequenceTests extends AbstractDbTestBase {
 
-    public SequenceTests(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public SequenceTests(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test

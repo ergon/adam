@@ -1,7 +1,7 @@
 package ch.ergon.adam.integrationtest;
 
 import ch.ergon.adam.core.Adam;
-import ch.ergon.adam.integrationtest.postgresql.AbstractPostgresqlTestBase;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractDbMigrationWithSchemaTest extends AbstractDbTestBase {
 
-    public AbstractDbMigrationWithSchemaTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public AbstractDbMigrationWithSchemaTest(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     private static final String DB_VERSION_5 = "5";
@@ -44,7 +44,7 @@ public abstract class AbstractDbMigrationWithSchemaTest extends AbstractDbTestBa
     }
 
     private String getCurrentSchemaVersion() throws SQLException {
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
+        ResultSet result = executeQueryOnTargetDb(format("SELECT \"target_version\" FROM \"%s\" ORDER BY \"execution_started_at\" DESC", SCHEMA_VERSION_TABLE_NAME));
         assertTrue(result.next());
         return result.getString(1);
     }
@@ -53,7 +53,7 @@ public abstract class AbstractDbMigrationWithSchemaTest extends AbstractDbTestBa
     public void testPreMigrationCreatingTable() throws Exception {
         doMigrate(DB_VERSION_4);
         assertThat(getCurrentSchemaVersion(), is(DB_VERSION_4));
-        getTargetDbConnection().createStatement().execute(format("DROP TABLE \"test_table\""));
+        executeOnTargetDb("DROP TABLE \"test_table\"");
         doMigrate(DB_VERSION_5);
         assertThat(getCurrentSchemaVersion(), is(DB_VERSION_5));
     }

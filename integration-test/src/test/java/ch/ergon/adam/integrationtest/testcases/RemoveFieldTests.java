@@ -5,6 +5,7 @@ import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -27,16 +28,16 @@ public abstract class RemoveFieldTests extends AbstractDbTestBase {
     private static final String INSERT_DATA_SQL =
         "insert into \"test_table\" values (2, 3)";
 
-    public RemoveFieldTests(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public RemoveFieldTests(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
     @Test
     public void testSimpleRemoveField() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -53,7 +54,7 @@ public abstract class RemoveFieldTests extends AbstractDbTestBase {
         assertThat(table.getFields().size(), is(1));
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"col1\") from \"test_table\"");
+        ResultSet result = executeQueryOnTargetDb("select sum(\"col1\") from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(2));
     }
@@ -62,8 +63,8 @@ public abstract class RemoveFieldTests extends AbstractDbTestBase {
     public void testSimpleRemoveFieldWithTableRename() throws Exception {
 
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -83,7 +84,7 @@ public abstract class RemoveFieldTests extends AbstractDbTestBase {
         assertThat(newTable.getFields().size(), is(1));
 
         // Data still present?
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select sum(\"col1\") from \"new_table\"");
+        ResultSet result = executeQueryOnTargetDb("select sum(\"col1\") from \"new_table\"");
         assertTrue(result.next());
         assertThat(result.getInt(1), is(2));
     }

@@ -3,9 +3,11 @@ package ch.ergon.adam.integrationtest.oracle;
 import ch.ergon.adam.integrationtest.testcases.ChangeFieldTypeTest;
 import org.junit.jupiter.api.Disabled;
 
+import static org.jooq.SQLDialect.ORACLE;
+
 public class OracleChangeFieldTypeTest extends ChangeFieldTypeTest {
     public OracleChangeFieldTypeTest() {
-        super(new OracleTestDbUrlProvider());
+        super(new OracleTestDbUrlProvider(), ORACLE);
     }
 
     protected String getCreateTableNotNullSql() {

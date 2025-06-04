@@ -9,12 +9,13 @@ import static ch.ergon.adam.core.db.schema.DataType.DECIMAL_INTEGER;
 import static ch.ergon.adam.core.db.schema.DataType.NUMERIC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jooq.SQLDialect.ORACLE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OracleCreateTableTest extends AbstractDbTestBase {
 
     public OracleCreateTableTest() {
-        super(new OracleTestDbUrlProvider());
+        super(new OracleTestDbUrlProvider(), ORACLE);
     }
 
     private static final String YML = "---\n" +

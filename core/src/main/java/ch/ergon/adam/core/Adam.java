@@ -7,11 +7,11 @@ import ch.ergon.adam.core.filetree.ClasspathTraverser;
 import ch.ergon.adam.core.filetree.DirectoryTraverser;
 import ch.ergon.adam.core.filetree.FileTreeTraverser;
 import ch.ergon.adam.core.filetree.TraverserFile;
+import ch.ergon.adam.core.helper.JdbcUrl;
 import ch.ergon.adam.core.prepost.GitVersionTree;
 import ch.ergon.adam.core.prepost.MigrationScriptProvider;
 import ch.ergon.adam.core.prepost.MigrationStep;
 import ch.ergon.adam.core.prepost.MigrationStepExecutor;
-import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static ch.ergon.adam.core.prepost.MigrationStep.POSTMIGRATION_ALWAYS;
-import static ch.ergon.adam.core.prepost.MigrationStep.POSTMIGRATION_INIT;
-import static ch.ergon.adam.core.prepost.MigrationStep.POSTMIGRATION_ONCE;
-import static ch.ergon.adam.core.prepost.MigrationStep.PREMIGRATION_ALWAYS;
-import static ch.ergon.adam.core.prepost.MigrationStep.PREMIGRATION_INIT;
-import static ch.ergon.adam.core.prepost.MigrationStep.PREMIGRATION_ONCE;
+import static ch.ergon.adam.core.prepost.MigrationStep.*;
 import static ch.ergon.adam.core.prepost.db_schema_version.DbSchemaVersionSource.SCHEMA_VERSION_TABLE_NAME;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
@@ -248,11 +243,19 @@ public class Adam {
     }
 
     private void createSchemaVersionEntry(SqlExecutor sqlExecutor, String fromVersion, String toVersion) {
-        sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (CURRENT_TIMESTAMP, ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
+        if (JdbcUrl.isDialectUrl(JdbcUrl.SQLITE_TYPE, targetUrl)) {
+            sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (datetime('now'), ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
+        } else {
+            sqlExecutor.queryResult(format("INSERT INTO \"%s\" (\"execution_started_at\", \"source_version\", \"target_version\") VALUES (CURRENT_TIMESTAMP(6), ?, ?)", SCHEMA_VERSION_TABLE_NAME), fromVersion, toVersion);
+        }
     }
 
     private void completeSchemaVersionEntry(SqlExecutor sqlExecutor) {
-        sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = CURRENT_TIMESTAMP WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        if (JdbcUrl.isDialectUrl(JdbcUrl.SQLITE_TYPE, targetUrl)) {
+            sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = datetime('now') WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        } else {
+            sqlExecutor.queryResult(format("UPDATE \"%s\" SET \"execution_completed_at\" = CURRENT_TIMESTAMP(6) WHERE \"execution_completed_at\" IS NULL", SCHEMA_VERSION_TABLE_NAME));
+        }
     }
 
     public void setAllowUnknownDBVersion(boolean allowUnknownDBVersion) {

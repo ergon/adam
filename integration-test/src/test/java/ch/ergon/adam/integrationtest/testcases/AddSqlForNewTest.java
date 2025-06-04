@@ -7,6 +7,7 @@ import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.integrationtest.AbstractDbTestBase;
 import ch.ergon.adam.integrationtest.DummySink;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
+import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -20,27 +21,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AddSqlForNewTest extends AbstractDbTestBase {
 
-    public AddSqlForNewTest(TestDbUrlProvider testDbUrlProvider) {
-        super(testDbUrlProvider);
+    public AddSqlForNewTest(TestDbUrlProvider testDbUrlProvider, SQLDialect dialect) {
+        super(testDbUrlProvider, dialect);
     }
 
-    private static final String CREATE_ENUM_SQL =
-        "create type custom_enum as enum ('val1', 'val2')";
-
     private static final String CREATE_TABLE_SQL =
-        "create table test_table (" +
+        "create table \"test_table\" (" +
             "col1 int" +
             ")";
 
     private static final String INSERT_DATA_SQL =
-        "insert into test_table values (1)";
+        "insert into \"test_table\" values (1)";
 
     @Test
     public void testAddSqlForNewMigration() throws Exception {
         // Setup db
-        getTargetDbConnection().createStatement().execute(CREATE_ENUM_SQL);
-        getTargetDbConnection().createStatement().execute(CREATE_TABLE_SQL);
-        getTargetDbConnection().createStatement().execute(INSERT_DATA_SQL);
+        executeOnTargetDb(getCreateEnumSql());
+        executeOnTargetDb(CREATE_TABLE_SQL);
+        executeOnTargetDb(INSERT_DATA_SQL);
         DummySink dummySink = targetToDummy();
         Schema schema = dummySink.getTargetSchema();
 
@@ -58,8 +56,12 @@ public abstract class AddSqlForNewTest extends AbstractDbTestBase {
         migrateTargetWithSchema(schema);
 
         // Verify
-        ResultSet result = getTargetDbConnection().createStatement().executeQuery("select * from test_table");
+        ResultSet result = executeQueryOnTargetDb("select * from \"test_table\"");
         assertTrue(result.next());
         assertThat(result.getString(2), is("{val1}"));
+    }
+
+    protected String getCreateEnumSql() {
+        return "create type custom_enum as enum ('val1', 'val2')";
     }
 }

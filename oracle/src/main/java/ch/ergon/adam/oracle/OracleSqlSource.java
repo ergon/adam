@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
@@ -109,8 +108,8 @@ public class OracleSqlSource extends JooqSource {
     }
 
     @Override
-    protected Field mapFieldFromJooq(org.jooq.Field<?> jooqField) {
-        Field field = super.mapFieldFromJooq(jooqField);
+    protected Field mapFieldFromJooq(org.jooq.Field<?> jooqField, org.jooq.Table<?> jooqTable) {
+        Field field = super.mapFieldFromJooq(jooqField, jooqTable);
         if (field.getDataType() == DataType.DECIMAL_INTEGER && field.getPrecision() == 19) {
             field.setPrecision(null);
             field.setDataType(DataType.BIGINT);

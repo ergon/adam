@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.toLinkedMap;
@@ -190,7 +189,7 @@ public class PostgreSqlSource extends JooqSource {
     }
 
     @Override
-    protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField) {
+    protected DataType mapDataTypeFromJooq(org.jooq.Field<?> jooqField, org.jooq.Table<?> jooqTable) {
         String typeName = jooqField.getDataType().isArray() ? jooqField.getDataType().getArrayComponentDataType().getTypeName() : jooqField.getDataType().getTypeName();
         switch (typeName) {
             case "other":
@@ -202,6 +201,6 @@ public class PostgreSqlSource extends JooqSource {
         if (enums.containsKey(typeName) || enums.containsKey(typeName.replaceFirst("_", ""))) {
             return ENUM;
         }
-        return super.mapDataTypeFromJooq(jooqField);
+        return super.mapDataTypeFromJooq(jooqField, jooqTable);
     }
 }

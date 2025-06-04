@@ -13,12 +13,13 @@ import java.sql.ResultSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.is;
+import static org.jooq.SQLDialect.POSTGRES;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EnumArrayFieldTest extends AbstractDbTestBase {
 
     public EnumArrayFieldTest() {
-        super(new PostgreSqlTestDbUrlProvider());
+        super(new PostgreSqlTestDbUrlProvider(), POSTGRES);
     }
 
     private static final String CREATE_ENUM_SQL =

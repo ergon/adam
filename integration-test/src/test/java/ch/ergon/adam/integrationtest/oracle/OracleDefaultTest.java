@@ -3,9 +3,11 @@ package ch.ergon.adam.integrationtest.oracle;
 import ch.ergon.adam.integrationtest.testcases.DefaultTest;
 import org.junit.jupiter.api.Test;
 
+import static org.jooq.SQLDialect.ORACLE;
+
 public class OracleDefaultTest extends DefaultTest {
     public OracleDefaultTest() {
-        super(new OracleTestDbUrlProvider());
+        super(new OracleTestDbUrlProvider(), ORACLE);
     }
 
     protected String getCreateTableIntDefaultSql() {
