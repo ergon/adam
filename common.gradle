@@ -1,5 +1,7 @@
 versioning {
-    postProcessVersion = { version -> version.contains('-') ? "${version}-SNAPSHOT" : version }
+    postProcessVersion = { version ->
+        version.matches('^[^-]+(-alpha|-beta)?[^-]*$') ? version : "${version}-SNAPSHOT"
+    }
     match = 'v*'
 }
 
