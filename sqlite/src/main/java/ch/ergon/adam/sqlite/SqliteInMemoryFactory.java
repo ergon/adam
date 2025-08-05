@@ -1,6 +1,5 @@
 package ch.ergon.adam.sqlite;
 
-import ch.ergon.adam.jooq.JooqSqlExecutor;
 import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SourceAndSinkAdapter;
@@ -66,6 +65,6 @@ public class SqliteInMemoryFactory implements SourceAndSinkAdapter {
 
     @Override
     public SqlExecutor createSqlExecutor(String url) {
-        return new JooqSqlExecutor(getOrCreateConnection(url), null);
+        return new SqliteSqlExecutor(getOrCreateConnection(url), null);
     }
 }

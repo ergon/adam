@@ -33,6 +33,13 @@ public class MariaDbTestDbUrlProvider extends TestDbUrlProvider {
         }
     }
 
+    public void restartContainers() {
+        sourceContainer.stop();
+        sourceContainer.start();
+        targetContainer.stop();
+        targetContainer.start();
+    }
+
     private void cleanSchema(Connection conn) throws SQLException {
         conn.createStatement().execute(format("DROP SCHEMA IF EXISTS `%s`", SOURCE_SCHEMA));
         conn.createStatement().execute(format("CREATE SCHEMA `%s`", SOURCE_SCHEMA));

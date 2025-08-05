@@ -31,7 +31,7 @@ public class MariaDbTransactionWrapper implements SchemaSource, SchemaSink, SqlE
             sqlSink = new MariaDbSink(dbConnection, schema);
             sqlSource = new MariaDbSource(dbConnection, schema);
             beginTransaction();
-            sqlExecutor = new JooqSqlExecutor(dbConnection, schema);
+            sqlExecutor = new MariaDbSqlExecutor(dbConnection, schema);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
