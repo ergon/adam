@@ -50,7 +50,8 @@ public class ReflectionHelper {
 
     private static Class<?> getClass(String className) {
             try {
-                return Class.forName(className);
+                // Do not initialize: scanning must not run static initializers of unrelated classes (e.g. Gradle tasks)
+                return Class.forName(className, false, ReflectionHelper.class.getClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }

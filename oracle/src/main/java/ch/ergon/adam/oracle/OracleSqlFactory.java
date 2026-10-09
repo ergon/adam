@@ -4,6 +4,9 @@ import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SourceAndSinkAdapter;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
+import org.jooq.SQLDialect;
+
+import static ch.ergon.adam.jooq.JooqUtils.getSqlDialect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +37,7 @@ public class OracleSqlFactory implements SourceAndSinkAdapter {
 
     public static synchronized OracleSqlTransactionWrapper getTransactionWrapper(String url) {
         if (!sqlSinksByUrl.containsKey(url) || sqlSinksByUrl.get(url).isClosed()) {
-            sqlSinksByUrl.put(url, new OracleSqlTransactionWrapper(url, extractSchema(url), () -> closeConnection(url)));
+            sqlSinksByUrl.put(url, new OracleSqlTransactionWrapper(url, extractSchema(url), getSqlDialect(url, SQLDialect.ORACLE), () -> closeConnection(url)));
         }
         OracleSqlTransactionWrapper connection = sqlSinksByUrl.get(url);
         connection.increaseClientCount();

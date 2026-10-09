@@ -7,7 +7,10 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,6 +19,7 @@ import java.util.Collection;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+@DisableCachingByDefault(because = "Modifies an external database")
 public class MigrateDBTask extends DefaultTask {
 
     private String targetUrl;
@@ -66,6 +70,7 @@ public class MigrateDBTask extends DefaultTask {
     }
 
     @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional
     public Path getMigrationExportPath() {
         return firstNonNull(migrationExportPath, extension.getAdamResourceExportPath());
@@ -76,6 +81,7 @@ public class MigrateDBTask extends DefaultTask {
     }
 
     @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
     public Path getSchemaSourcePath() {
         return firstNonNull(schemaSourcePath, extension.getSchemaSourcePath());
     }

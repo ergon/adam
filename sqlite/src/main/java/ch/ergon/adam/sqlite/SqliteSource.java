@@ -1,36 +1,28 @@
 package ch.ergon.adam.sqlite;
 
-import ch.ergon.adam.jooq.JooqSource;
-import ch.ergon.adam.core.db.schema.Index;
 import ch.ergon.adam.core.db.schema.Schema;
 import ch.ergon.adam.core.db.schema.Table;
-import ch.ergon.adam.core.db.schema.View;
-import com.google.common.collect.Lists;
+import ch.ergon.adam.jooq.JooqSource;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SQLDialect;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
-import static org.jooq.SQLDialect.SQLITE;
 
 public class SqliteSource extends JooqSource {
 
 
-    public SqliteSource(String url) throws SQLException {
+    public SqliteSource(String url, SQLDialect sqlDialect) throws SQLException {
         super(url);
-        setSqlDialect(SQLITE);
+        setSqlDialect(sqlDialect);
     }
 
-    public SqliteSource(Connection connection) {
+    public SqliteSource(Connection connection, SQLDialect sqlDialect) {
         super(connection);
-        setSqlDialect(SQLITE);
+        setSqlDialect(sqlDialect);
     }
 
     @Override

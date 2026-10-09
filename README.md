@@ -124,6 +124,7 @@ buildscript {
   dependencies {
     classpath 'ch.ergon.adam:postgresql:1.0.0'
     classpath 'ch.ergon.adam:yml:1.0.0'
+    classpath 'org.postgresql:postgresql:42.7.14'
   }
 }
 
@@ -138,6 +139,10 @@ adam {
   // ...
 }
 ```
+
+The database modules (`postgresql`, `mariadb`, `oracle`, `sqlite`) do not ship a JDBC driver. Add the driver matching your
+database to the classpath, e.g. `org.postgresql:postgresql`, `org.mariadb.jdbc:mariadb-java-client`,
+`com.oracle.database.jdbc:ojdbc11` or `org.xerial:sqlite-jdbc`.
 
 #### Gradle Tasks
 

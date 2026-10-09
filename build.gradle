@@ -7,17 +7,20 @@ buildscript {
 }
 
 plugins {
-    id "ch.ergon.gradle.goodies.versioning" version "1.0.0"
-    id 'com.github.jk1.dependency-license-report' version '1.16'
-    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
+    id 'com.github.jk1.dependency-license-report' version '3.1.4'
+    id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
 }
 
 apply from: "${rootProject.projectDir}/common.gradle"
 
-group 'ch.ergon.adam'
+group = 'ch.ergon.adam'
 
 licenseReport {
     allowedLicensesFile = new File("$projectDir/allowed-licenses.json")
+    // Only check what ends up as dependency of the published artifacts
+    // The root project must come first: the report renderers read their configuration from it
+    projects = ([project] + subprojects.findAll { !it.name.startsWith('integration-test') }) as Project[]
+    configurations = ['runtimeClasspath'] as String[]
 
     checkLicense {
         outputs.upToDateWhen { false }

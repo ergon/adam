@@ -7,10 +7,12 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+@DisableCachingByDefault(because = "Modifies an external database")
 public class CleanDbTask extends DefaultTask {
 
     private final AdamExtension extension;

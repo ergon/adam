@@ -1,11 +1,11 @@
 apply plugin: 'maven-publish'
 
-task javadocJar(type: Jar) {
+def javadocJar = tasks.register('javadocJar', Jar) {
     archiveClassifier = 'javadoc'
     from javadoc
 }
 
-task sourcesJar(type: Jar) {
+def sourcesJar = tasks.register('sourcesJar', Jar) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
@@ -99,7 +99,7 @@ javadoc {
     }
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+tasks.named('assemble') {
+    dependsOn javadocJar, sourcesJar
 }
 

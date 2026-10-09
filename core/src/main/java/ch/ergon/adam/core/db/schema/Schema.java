@@ -2,7 +2,7 @@ package ch.ergon.adam.core.db.schema;
 
 import ch.ergon.adam.core.helper.CollectorsHelper;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;

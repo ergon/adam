@@ -6,7 +6,10 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +18,7 @@ import java.nio.file.Path;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
+@DisableCachingByDefault(because = "Output depends on the git history")
 public class ExportGitHistoryTask extends DefaultTask {
 
     private final AdamExtension extension;
@@ -47,6 +51,7 @@ public class ExportGitHistoryTask extends DefaultTask {
     }
 
     @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
     public Path getRefsPath() {
         return firstNonNull(gitRepo, extension.gitRepo).resolve(".git/refs");
     }

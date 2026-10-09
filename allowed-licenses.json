@@ -10,6 +10,12 @@
       "moduleLicense": "The MIT License"
     },
     {
+      "moduleLicense": "MIT"
+    },
+    {
+      "moduleLicense": "The Apache License, Version 2.0"
+    },
+    {
       "moduleLicense": "Apache License 2.0"
     },
     {
@@ -34,7 +40,13 @@
       "moduleLicense": "Apache 2"
     },
     {
+      "moduleLicense": "BSD"
+    },
+    {
       "moduleLicense": "BSD-2-Clause"
+    },
+    {
+      "moduleLicense": "BSD-3-Clause"
     },
     {
       "moduleLicense": "CC0"

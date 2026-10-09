@@ -4,7 +4,7 @@ import ch.ergon.adam.core.helper.Pair;
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
 import ch.ergon.adam.postgresql.PostgreSqlFactory;
 import ch.ergon.adam.postgresql.PostgreSqlTransactionWrapper;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,7 +14,7 @@ import static java.lang.String.format;
 
 public class PostgreSqlTestDbUrlProvider extends TestDbUrlProvider {
 
-    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15-alpine");
+    private static final PostgreSQLContainer container = new PostgreSQLContainer("postgres:15-alpine");
 
     private static final String SOURCE_SCHEMA = "test-source";
     protected static final String TARGET_SCHEMA = "test-target";

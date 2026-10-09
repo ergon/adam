@@ -10,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static ch.ergon.adam.jooq.JooqUtils.getSqlDialect;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.jooq.SQLDialect.SQLITE;
 
 public class SqliteInMemoryFactory implements SourceAndSinkAdapter {
 
@@ -55,12 +57,12 @@ public class SqliteInMemoryFactory implements SourceAndSinkAdapter {
 
     @Override
     public SchemaSource createSource(String url) {
-        return new SqliteSource(getOrCreateConnection(url));
+        return new SqliteSource(getOrCreateConnection(url), getSqlDialect(url, SQLITE));
     }
 
     @Override
     public SchemaSink createSink(String url) {
-        return new SqliteSink(getOrCreateConnection(url));
+        return new SqliteSink(getOrCreateConnection(url), getSqlDialect(url, SQLITE));
     }
 
     @Override

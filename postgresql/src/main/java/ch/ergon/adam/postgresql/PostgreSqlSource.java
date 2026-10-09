@@ -31,15 +31,15 @@ public class PostgreSqlSource extends JooqSource {
     private final String schemaName;
     private Map<String, DbEnum> enums;
 
-    public PostgreSqlSource(String url, String schemaName) throws SQLException {
+    public PostgreSqlSource(String url, String schemaName, SQLDialect sqlDialect) throws SQLException {
         super(url, schemaName);
         this.schemaName = schemaName;
-        this.setSqlDialect(SQLDialect.POSTGRES);
+        this.setSqlDialect(sqlDialect);
     }
 
-    public PostgreSqlSource(Connection connection, String schemaName) {
+    public PostgreSqlSource(Connection connection, String schemaName, SQLDialect sqlDialect) {
         super(connection, schemaName);
-        this.setSqlDialect(SQLDialect.POSTGRES);
+        this.setSqlDialect(sqlDialect);
         this.schemaName = schemaName;
     }
 

@@ -4,9 +4,12 @@ import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SourceAndSinkAdapter;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
+import org.jooq.SQLDialect;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static ch.ergon.adam.jooq.JooqUtils.getSqlDialect;
 
 public class PostgreSqlFactory implements SourceAndSinkAdapter {
 
@@ -34,7 +37,7 @@ public class PostgreSqlFactory implements SourceAndSinkAdapter {
 
     public static synchronized PostgreSqlTransactionWrapper getTransactionWrapper(String url) {
         if (!sqlSinksByUrl.containsKey(url) || sqlSinksByUrl.get(url).isClosed()) {
-            sqlSinksByUrl.put(url, new PostgreSqlTransactionWrapper(url, extractSchema(url), () -> closeConnection(url)));
+            sqlSinksByUrl.put(url, new PostgreSqlTransactionWrapper(url, extractSchema(url), getSqlDialect(url, SQLDialect.POSTGRES), () -> closeConnection(url)));
         }
         PostgreSqlTransactionWrapper connection = sqlSinksByUrl.get(url);
         connection.increaseClientCount();

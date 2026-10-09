@@ -1,6 +1,6 @@
 package ch.ergon.adam.core.db.schema;
 
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -92,7 +92,7 @@ public class Field extends SchemaItem {
         return dbEnum;
     }
 
-    public void setDbEnum(@Nonnull DbEnum dbEnum) {
+    public void setDbEnum(@NonNull DbEnum dbEnum) {
         this.dbEnum = dbEnum;
         dbEnum.addReferencingField(this);
     }

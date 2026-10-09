@@ -27,15 +27,15 @@ public class MariaDbSource extends JooqSource {
     private final String schemaName;
     private Map<String, DbEnum> enums;
 
-    public MariaDbSource(String url, String schemaName) throws SQLException {
+    public MariaDbSource(String url, String schemaName, SQLDialect sqlDialect) throws SQLException {
         super(url, schemaName);
         this.schemaName = schemaName;
-        this.setSqlDialect(SQLDialect.MARIADB);
+        this.setSqlDialect(sqlDialect);
     }
 
-    public MariaDbSource(Connection connection, String schemaName) {
+    public MariaDbSource(Connection connection, String schemaName, SQLDialect sqlDialect) {
         super(connection, schemaName);
-        this.setSqlDialect(SQLDialect.MARIADB);
+        this.setSqlDialect(sqlDialect);
         this.schemaName = schemaName;
     }
 

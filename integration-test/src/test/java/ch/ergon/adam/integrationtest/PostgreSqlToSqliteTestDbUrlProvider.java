@@ -1,6 +1,6 @@
 package ch.ergon.adam.integrationtest;
 
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import static java.lang.String.format;
 
 public class PostgreSqlToSqliteTestDbUrlProvider extends TestDbUrlProvider {
 
-    private final static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15-alpine");
+    private final static PostgreSQLContainer container = new PostgreSQLContainer("postgres:15-alpine");
 
     private static final String SOURCE_SCHEMA = "test-source";
     protected static final String TARGET_SCHEMA = "test-target";
