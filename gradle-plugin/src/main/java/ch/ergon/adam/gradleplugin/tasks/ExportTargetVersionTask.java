@@ -5,6 +5,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@DisableCachingByDefault(because = "Writing a single version file is not worth caching")
 public class ExportTargetVersionTask extends DefaultTask {
 
     private final AdamExtension extension;

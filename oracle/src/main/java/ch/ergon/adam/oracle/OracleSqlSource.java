@@ -114,6 +114,10 @@ public class OracleSqlSource extends JooqSource {
             field.setPrecision(null);
             field.setDataType(DataType.BIGINT);
         }
+        if (field.getDataType() == DataType.CLOB || field.getDataType() == DataType.NCLOB || field.getDataType() == DataType.BLOB) {
+            // Newer jOOQ versions report the inline LOB size (4000) as length
+            field.setLength(null);
+        }
         return field;
     }
 }

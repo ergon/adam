@@ -1,6 +1,6 @@
 package ch.ergon.adam.core.db.schema;
 
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 public class ForeignKey extends Constraint {
 
@@ -15,7 +15,7 @@ public class ForeignKey extends Constraint {
         return targetIndex;
     }
 
-    public void setTargetIndex(@Nonnull Index targetIndex) {
+    public void setTargetIndex(@NonNull Index targetIndex) {
         this.targetIndex = targetIndex;
         targetIndex.addReferencingForeignKey(this);
     }
@@ -24,7 +24,7 @@ public class ForeignKey extends Constraint {
         return field;
     }
 
-    public void setField(@Nonnull Field field) {
+    public void setField(@NonNull Field field) {
         this.field = field;
     }
 }

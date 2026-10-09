@@ -1,6 +1,6 @@
 package ch.ergon.adam.gradleplugin;
 
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -18,7 +18,7 @@ public class AdamPlugin implements Plugin<Project> {
 	public static final String ADAM_EXTENSION = "adam";
 
 	@Override
-	public void apply(@Nonnull Project project) {
+	public void apply(@NonNull Project project) {
 
 		project.getExtensions().create(ADAM_EXTENSION, AdamExtension.class, project);
 

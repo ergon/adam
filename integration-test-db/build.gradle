@@ -2,6 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'ch.ergon.adam'
+group = 'ch.ergon.adam'
 
-sourceCompatibility = 21
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}

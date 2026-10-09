@@ -5,6 +5,7 @@ import ch.ergon.adam.core.prepost.MigrationScriptProvider;
 import ch.ergon.adam.gradleplugin.AdamExtension;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.*;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
+@DisableCachingByDefault(because = "Output depends on the git history")
 public class ExportMigrationScriptsTask extends DefaultTask {
 
     private final AdamExtension extension;
@@ -58,6 +60,7 @@ public class ExportMigrationScriptsTask extends DefaultTask {
     }
 
     @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
     public Path getRefsPath() {
         return firstNonNull(gitRepo, extension.gitRepo).resolve(".git/refs");
     }
@@ -72,6 +75,7 @@ public class ExportMigrationScriptsTask extends DefaultTask {
 
     @InputDirectory
     @SkipWhenEmpty
+    @PathSensitive(PathSensitivity.RELATIVE)
     public Path getMigrationScriptSourcePath() {
         return firstNonNull(migrationScriptSourcePath, extension.getMigrationScriptsSourcePath());
     }

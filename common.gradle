@@ -1,9 +1,12 @@
-versioning {
-    postProcessVersion = { version ->
-        version.matches('^[^-]+(-alpha|-beta)?[^-]*$') ? version : "${version}-SNAPSHOT"
-    }
-    match = 'v*'
+def gitDescribe = providers.exec {
+    commandLine 'git', '-c', "safe.directory=${rootDir.absolutePath}", 'describe', '--tags', '--match', 'v*', '--always', '--dirty'
+    ignoreExitValue = true
 }
 
-version = versioning.describeVersion()
+if (gitDescribe.result.get().exitValue != 0) {
+    throw new GradleException("git describe failed: ${gitDescribe.standardError.asText.get().trim()}")
+}
 
+def describedVersion = gitDescribe.standardOutput.asText.get().trim().replaceFirst(/^v/, '')
+// Exact alpha/beta tags (e.g. v1.4.0-beta.1) are releases, not snapshots
+version = describedVersion ==~ /[^-]+(-alpha|-beta)?[^-]*/ ? describedVersion : "${describedVersion}-SNAPSHOT"

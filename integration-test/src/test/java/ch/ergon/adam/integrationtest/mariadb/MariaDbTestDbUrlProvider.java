@@ -1,7 +1,7 @@
 package ch.ergon.adam.integrationtest.mariadb;
 
 import ch.ergon.adam.integrationtest.TestDbUrlProvider;
-import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.mariadb.MariaDBContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,13 +13,13 @@ public class MariaDbTestDbUrlProvider extends TestDbUrlProvider {
     private static final String SOURCE_SCHEMA = "test-source";
     protected static final String TARGET_SCHEMA = "test-target";
 
-    private static final MariaDBContainer<?> sourceContainer =
-        new MariaDBContainer<>("mariadb:11.2")
+    private static final MariaDBContainer sourceContainer =
+        new MariaDBContainer("mariadb:11.2")
             .withUsername("root")
             .withDatabaseName(SOURCE_SCHEMA);
 
-    private static final MariaDBContainer<?> targetContainer =
-        new MariaDBContainer<>("mariadb:11.2")
+    private static final MariaDBContainer targetContainer =
+        new MariaDBContainer("mariadb:11.2")
             .withUsername("root")
             .withDatabaseName(TARGET_SCHEMA);
 
@@ -57,7 +57,7 @@ public class MariaDbTestDbUrlProvider extends TestDbUrlProvider {
         return getDbUrl(targetContainer);
     }
 
-    protected String getDbUrl(MariaDBContainer<?> container) {
+    protected String getDbUrl(MariaDBContainer container) {
         if (!container.isRunning()) {
             container.start();
         }
