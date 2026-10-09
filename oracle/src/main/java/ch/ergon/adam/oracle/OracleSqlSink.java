@@ -3,18 +3,18 @@ package ch.ergon.adam.oracle;
 import ch.ergon.adam.core.db.schema.Field;
 import ch.ergon.adam.core.db.schema.Table;
 import ch.ergon.adam.jooq.JooqSink;
+import org.jooq.SQLDialect;
 
 import java.sql.Connection;
 
 import static java.lang.String.format;
-import static org.jooq.SQLDialect.ORACLE18C;
 
 public class OracleSqlSink extends JooqSink {
 
     private String schemaName;
 
-    public OracleSqlSink(Connection dbConnection, String schema) {
-        super(dbConnection, ORACLE18C, schema);
+    public OracleSqlSink(Connection dbConnection, String schema, SQLDialect dialect) {
+        super(dbConnection, dialect, schema);
         this.schemaName = schema;
     }
 

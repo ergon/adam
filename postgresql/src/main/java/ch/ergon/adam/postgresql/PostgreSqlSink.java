@@ -15,7 +15,6 @@ import java.sql.Connection;
 import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.createQuotedList;
 import static java.lang.String.format;
-import static org.jooq.SQLDialect.POSTGRES;
 import static org.jooq.impl.SQLDataType.BIGINT;
 import static org.jooq.impl.SQLDataType.INTEGER;
 import static org.jooq.impl.SQLDataType.VARCHAR;
@@ -24,8 +23,8 @@ public class PostgreSqlSink extends JooqSink {
 
     private String schemaName;
 
-    public PostgreSqlSink(Connection dbConnection, String schema) {
-        super(dbConnection, POSTGRES, schema);
+    public PostgreSqlSink(Connection dbConnection, String schema, SQLDialect dialect) {
+        super(dbConnection, dialect, schema);
         this.schemaName = schema;
     }
 

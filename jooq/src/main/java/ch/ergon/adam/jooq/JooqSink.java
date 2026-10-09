@@ -45,6 +45,12 @@ public class JooqSink implements SchemaSink {
         this.schema = null;
     }
 
+    public JooqSink(String url, SQLDialect dialect) {
+        context = DSL.using(url);
+        context.configuration().set(dialect);
+        this.schema = null;
+    }
+
     public JooqSink(Connection connection, SQLDialect dialect) {
         context = DSL.using(connection, dialect);
         this.schema = null;

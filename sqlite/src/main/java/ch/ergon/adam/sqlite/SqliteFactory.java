@@ -7,7 +7,9 @@ import ch.ergon.adam.core.db.interfaces.SqlExecutor;
 
 import java.sql.SQLException;
 
+import static ch.ergon.adam.jooq.JooqUtils.getSqlDialect;
 import static ch.ergon.adam.sqlite.SqliteInMemoryFactory.SQLITE_IN_MEMORY_URL;
+import static org.jooq.SQLDialect.SQLITE;
 
 public class SqliteFactory implements SourceAndSinkAdapter {
 
@@ -19,7 +21,7 @@ public class SqliteFactory implements SourceAndSinkAdapter {
     @Override
     public SchemaSource createSource(String url) {
         try {
-            return new SqliteSource(url);
+            return new SqliteSource(url, getSqlDialect(url, SQLITE));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -27,7 +29,7 @@ public class SqliteFactory implements SourceAndSinkAdapter {
 
     @Override
     public SchemaSink createSink(String url) {
-        return new SqliteSink(url);
+        return new SqliteSink(url, getSqlDialect(url, SQLITE));
     }
 
     @Override

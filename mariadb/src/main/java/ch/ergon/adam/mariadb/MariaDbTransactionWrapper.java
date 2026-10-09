@@ -5,6 +5,7 @@ import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
 import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.jooq.JooqSqlExecutor;
+import org.jooq.SQLDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +25,12 @@ public class MariaDbTransactionWrapper implements SchemaSource, SchemaSink, SqlE
     private boolean closed;
     private int clientCount = 0;
 
-    public MariaDbTransactionWrapper(String url, String schema, Runnable closeHandler) {
+    public MariaDbTransactionWrapper(String url, String schema, SQLDialect dialect, Runnable closeHandler) {
         this.closeHandler = closeHandler;
         try {
             dbConnection = DriverManager.getConnection(url);
-            sqlSink = new MariaDbSink(dbConnection, schema);
-            sqlSource = new MariaDbSource(dbConnection, schema);
+            sqlSink = new MariaDbSink(dbConnection, schema, dialect);
+            sqlSource = new MariaDbSource(dbConnection, schema, dialect);
             beginTransaction();
             sqlExecutor = new MariaDbSqlExecutor(dbConnection, schema);
         } catch (SQLException e) {

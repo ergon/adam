@@ -3,8 +3,7 @@ package ch.ergon.adam.mariadb;
 import ch.ergon.adam.core.db.schema.*;
 import ch.ergon.adam.jooq.JooqSink;
 import org.jooq.CreateTableElementListStep;
-import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultDataType;
+import org.jooq.SQLDialect;
 import org.jooq.impl.SQLDataType;
 
 import java.sql.Connection;
@@ -12,15 +11,13 @@ import java.sql.Connection;
 import static ch.ergon.adam.core.db.schema.DataType.ENUM;
 import static ch.ergon.adam.core.helper.CollectorsHelper.createQuotedList;
 import static java.lang.String.format;
-import static org.jooq.SQLDialect.MARIADB;
-import static org.jooq.impl.SQLDataType.VARCHAR;
 
 public class MariaDbSink extends JooqSink {
 
     private String schemaName;
 
-    public MariaDbSink(Connection dbConnection, String schema) {
-        super(dbConnection, MARIADB, schema);
+    public MariaDbSink(Connection dbConnection, String schema, SQLDialect dialect) {
+        super(dbConnection, dialect, schema);
         this.schemaName = schema;
     }
 

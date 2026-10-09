@@ -22,15 +22,15 @@ public class OracleSqlSource extends JooqSource {
     private final String schemaName;
     private Map<String, DbEnum> enums;
 
-    public OracleSqlSource(String url, String schemaName) throws SQLException {
+    public OracleSqlSource(String url, String schemaName, SQLDialect sqlDialect) throws SQLException {
         super(url, schemaName);
         this.schemaName = schemaName;
-        this.setSqlDialect(SQLDialect.ORACLE18C);
+        this.setSqlDialect(sqlDialect);
     }
 
-    public OracleSqlSource(Connection connection, String schemaName) {
+    public OracleSqlSource(Connection connection, String schemaName, SQLDialect sqlDialect) {
         super(connection, schemaName);
-        this.setSqlDialect(SQLDialect.ORACLE18C);
+        this.setSqlDialect(sqlDialect);
         this.schemaName = schemaName;
     }
 

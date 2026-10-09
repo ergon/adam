@@ -5,6 +5,7 @@ import ch.ergon.adam.jooq.JooqSqlExecutor;
 import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
+import org.jooq.SQLDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +25,12 @@ public class PostgreSqlTransactionWrapper implements SchemaSource, SchemaSink, S
     private boolean closed;
     private int clientCount = 0;
 
-    public PostgreSqlTransactionWrapper(String url, String schema, Runnable closeHandler) {
+    public PostgreSqlTransactionWrapper(String url, String schema, SQLDialect dialect, Runnable closeHandler) {
         this.closeHandler = closeHandler;
         try {
             dbConnection = DriverManager.getConnection(url);
-            sqlSink = new PostgreSqlSink(dbConnection, schema);
-            sqlSource = new PostgreSqlSource(dbConnection, schema);
+            sqlSink = new PostgreSqlSink(dbConnection, schema, dialect);
+            sqlSource = new PostgreSqlSource(dbConnection, schema, dialect);
             beginTransaction();
             sqlExecutor = new JooqSqlExecutor(dbConnection, schema);
         } catch (SQLException e) {

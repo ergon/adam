@@ -5,6 +5,7 @@ import ch.ergon.adam.jooq.JooqSqlExecutor;
 import ch.ergon.adam.core.db.interfaces.SchemaSink;
 import ch.ergon.adam.core.db.interfaces.SchemaSource;
 import ch.ergon.adam.core.db.interfaces.SqlExecutor;
+import org.jooq.SQLDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +25,12 @@ public class OracleSqlTransactionWrapper implements SchemaSource, SchemaSink, Sq
     private boolean closed;
     private int clientCount = 0;
 
-    public OracleSqlTransactionWrapper(String url, String schema, Runnable closeHandler) {
+    public OracleSqlTransactionWrapper(String url, String schema, SQLDialect dialect, Runnable closeHandler) {
         this.closeHandler = closeHandler;
         try {
             dbConnection = DriverManager.getConnection(url);
-            sqlSink = new OracleSqlSink(dbConnection, schema);
-            sqlSource = new OracleSqlSource(dbConnection, schema);
+            sqlSink = new OracleSqlSink(dbConnection, schema, dialect);
+            sqlSource = new OracleSqlSource(dbConnection, schema, dialect);
             beginTransaction();
             sqlExecutor = new OracleSqlExecutor(dbConnection, schema);
         } catch (SQLException e) {
